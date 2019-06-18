@@ -1,0 +1,20 @@
+{
+  "name": "BlueSteel",
+  "short_name": "BlueSteel",
+  "icons": [
+    {
+      "src": "icons/bluesteel-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/bluesteel-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#9c27b0",
+  "theme_color": "#0d47a1"
+}
