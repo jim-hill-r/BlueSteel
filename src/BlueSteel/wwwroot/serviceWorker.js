@@ -1,6 +1,6 @@
 ﻿var cacheName = 'bluesteel-cache';
 var filesToCache = [
-    '/',
+    // '/', //Not properly serving '/' right now due to CDN restrictions
     '/favicon.ico',
 
     // Html and css files
