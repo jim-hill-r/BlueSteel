@@ -5,42 +5,31 @@
       <h3> {{feedbackMessage}}</h3>
       <q-btn color="accent" label="Done!" @click="done()" />
     </div>
-    <paintable
-      alwaysOnTop
-      :active="true"
-      :width="800"
-      :height="800"
-      :name="paintableName"
-      :color="paintableColor"
-      :lineWidth="20"
-      :disableNavigation="true"
-      ref="paintableRef"
-      class="text-center">
-    </paintable>
+    <EelCanvas ref="whiteboard"></EelCanvas>
   </q-page>
 </template>
 
 <script>
-import Vue from 'vue'
-import Paintable from 'vue-paintable'
-
-Vue.use(Paintable)
+import EelCanvas from '../components/EelCanvas.vue'
 
 export default {
   name: 'PageIndex',
+  components: {
+    EelCanvas
+  },
   data () {
     return {
       paintableName: 'test',
       paintableColor: '#90a4ae',
-      currentLetter: 'A',
+      currentLetter: 'a',
       feedbackMessage: ''
     }
   },
   methods: {
     done () {
-      this.currentLetter = String.fromCharCode(65 + Math.floor(Math.random() * 26))
+      this.currentLetter = String.fromCharCode(97 + Math.floor(Math.random() * 26))
       this.feedbackMessage = 'Great job!'
-      this.$refs.paintableRef.clearCanvas()
+      this.$refs.whiteboard.clear()
     }
   }
 }
