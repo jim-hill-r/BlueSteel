@@ -26,13 +26,40 @@
       content-class="bg-grey-2"
     >
       <q-list>
-        <q-item clickable to="">
+        <q-item clickable to="tracing">
           <q-item-section avatar>
-            <q-icon name="exit_to_app" />
+            <q-icon name="fingerprint" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Welcome</q-item-label>
-            <q-item-label caption>Learn to read</q-item-label>
+            <q-item-label>Tracing Practice</q-item-label>
+            <q-item-label caption>Practice tracing letters to learn the patterns</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable to="pattern">
+          <q-item-section avatar>
+            <q-icon name="scatter_plot" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Pattern Practice</q-item-label>
+            <q-item-label caption>Practice writing letters given a start and finish point</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable to="freeform">
+          <q-item-section avatar>
+            <q-icon name="gesture" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Freeform Practice</q-item-label>
+            <q-item-label caption>Practice writing letters</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable to="training">
+          <q-item-section avatar>
+            <q-icon name="train" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Train the Eel</q-item-label>
+            <q-item-label caption>Write letters accurately to train the algorithm</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>

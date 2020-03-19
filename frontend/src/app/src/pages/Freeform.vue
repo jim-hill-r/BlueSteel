@@ -2,23 +2,27 @@
   <q-page padding>
     <div>
       <div class="row justify-center">
-        <div>
-          <h2 style="font-family: 'Chilanka', cursive; color:#4fc3f7"> Blue Eel </h2>
+        <div class="text-center">
+          <h2> Draw the letter {{currentLetter}}! </h2>
+          <h3> {{feedbackMessage}}</h3>
+          <q-btn color="accent" label="Done!" @click="done()" />
         </div>
       </div>
       <div class="row justify-center">
-        <h4 style="font-family: 'Chilanka', cursive; color:#4fc3f7"> Writing made simple! </h4>
-      </div>
-      <div class="row justify-center">
-        <q-btn color="accent" label="Begin" to="freeform" />
+          <EelCanvas ref="whiteboard"></EelCanvas>
       </div>
     </div>
   </q-page>
 </template>
 
 <script>
+import EelCanvas from '../components/EelCanvas.vue'
+
 export default {
-  name: 'PageIndex',
+  name: 'PageFreeform',
+  components: {
+    EelCanvas
+  },
   data () {
     return {
       paintableName: 'test',
