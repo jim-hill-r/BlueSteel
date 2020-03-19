@@ -1,16 +1,16 @@
 <template>
   <q-page padding>
-    <div>
-      <div class="row justify-center">
-        <div class="text-center">
-          <h2> Draw the letter {{currentLetter}}! </h2>
-          <h3> {{feedbackMessage}}</h3>
-          <q-btn color="accent" label="Done!" @click="done()" />
-        </div>
+    <div class="row justify-center">
+      <div class="text-center">
+        <h4> Draw the letter {{currentLetter}}! </h4>
+        <p> {{feedbackMessage}} </p>
+        <p>
+          <q-btn color="accent" glossy label="Done!" @click="done()" />
+        </p>
       </div>
-      <div class="row justify-center">
-          <EelCanvas ref="whiteboard"></EelCanvas>
-      </div>
+    </div>
+    <div class="row justify-center">
+        <EelCanvas ref="whiteboard"></EelCanvas>
     </div>
   </q-page>
 </template>
@@ -25,17 +25,24 @@ export default {
   },
   data () {
     return {
-      paintableName: 'test',
-      paintableColor: '#90a4ae',
-      currentLetter: 'a',
-      feedbackMessage: ''
+      currentLetter: this.getNextLetter(),
+      feedbackMessge: ''
     }
+  },
+  created: function () {
+    this.currentLetter = String.fromCharCode(97 + Math.floor(Math.random() * 26))
   },
   methods: {
     done () {
-      this.currentLetter = String.fromCharCode(97 + Math.floor(Math.random() * 26))
-      this.feedbackMessage = 'Great job!'
+      this.currentLetter = this.getNextLetter()
+      this.feedbackMessage = this.getFeedback()
       this.$refs.whiteboard.clear()
+    },
+    getNextLetter () {
+      return String.fromCharCode(97 + Math.floor(Math.random() * 26))
+    },
+    getFeedback () {
+      return 'Great Job!'
     }
   }
 }

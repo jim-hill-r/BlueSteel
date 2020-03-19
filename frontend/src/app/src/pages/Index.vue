@@ -18,21 +18,6 @@
 
 <script>
 export default {
-  name: 'PageIndex',
-  data () {
-    return {
-      paintableName: 'test',
-      paintableColor: '#90a4ae',
-      currentLetter: 'a',
-      feedbackMessage: ''
-    }
-  },
-  methods: {
-    done () {
-      this.currentLetter = String.fromCharCode(97 + Math.floor(Math.random() * 26))
-      this.feedbackMessage = 'Great job!'
-      this.$refs.whiteboard.clear()
-    }
-  }
+  name: 'PageIndex'
 }
 </script>
