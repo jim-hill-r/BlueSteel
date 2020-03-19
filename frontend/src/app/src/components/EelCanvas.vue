@@ -19,27 +19,35 @@ export default {
   methods: {
     styleCanvas () {
       this.canvas.style.background = 'linear-gradient(30deg, #FFFFFF, #E0F7FA, #FFFFFF)'
-      this.canvas.width = 800
-      this.canvas.height = 1000
+      this.canvas.width = 500
+      this.canvas.height = 500
       this.canvas.style.border = '1px solid #E0F7FA'
+      this.configureUserStroke()
     },
     configureCanvas () {
       this.canvas.addEventListener('mousedown', (e) => this.handleMouseDown(e), false)
       this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e), false)
       this.canvas.addEventListener('mouseup', (e) => this.handleMouseUp(e), false)
       this.canvas.addEventListener('mouseleave', (e) => this.handleMouseLeave(e), false)
+    },
+    configureUserStroke () {
       this.context.strokeStyle = '#006064'
       this.context.lineWidth = 15
       this.context.lineCap = 'round'
     },
+    configureEelStroke () {
+      this.context.strokeStyle = '#FFD54F'
+      this.context.lineWidth = 8
+      this.context.lineCap = 'round'
+    },
     handleMouseDown (event) {
+      this.configureUserStroke()
       this.drawing = true
       this.prevPos = { x: event.offsetX, y: event.offsetY }
       this.paint(this.prevPos, this.prevPos)
     },
     handleMouseMove (event) {
       if (this.drawing) {
-        console.log(event)
         this.paint(this.prevPos, { x: event.offsetX, y: event.offsetY })
       }
       this.prevPos = { x: event.offsetX, y: event.offsetY }
@@ -58,6 +66,12 @@ export default {
     },
     clear () {
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    },
+    draw (points) {
+      this.configureEelStroke()
+      for (let i = 1; i < points.length; i++) {
+        this.paint(points[i - 1], points[i])
+      }
     }
   }
 }
