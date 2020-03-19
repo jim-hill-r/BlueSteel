@@ -20,7 +20,8 @@
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.1",
     "node-fetch": "^2.6.0",
-    "quasar": "^1.0.0"
+    "quasar": "^1.0.0",
+    "vue-paintable": "^2.1.2"
   },
   "devDependencies": {
     "@quasar/app": "^1.0.0",
