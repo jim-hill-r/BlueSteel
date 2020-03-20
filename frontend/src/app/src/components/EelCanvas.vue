@@ -1,5 +1,5 @@
 <template>
-  <canvas id="mainCanvas" ref="mainCanvas"></canvas>
+  <canvas style="touch-action:none;" id="mainCanvas" ref="mainCanvas"></canvas>
 </template>
 
 <script>
@@ -29,6 +29,10 @@ export default {
       this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e), false)
       this.canvas.addEventListener('mouseup', (e) => this.handleMouseUp(e), false)
       this.canvas.addEventListener('mouseleave', (e) => this.handleMouseLeave(e), false)
+      this.canvas.addEventListener('pointerdown', (e) => this.handleMouseDown(e), false)
+      this.canvas.addEventListener('pointermove', (e) => this.handleMouseMove(e), false)
+      this.canvas.addEventListener('pointerup', (e) => this.handleMouseUp(e), false)
+      this.canvas.addEventListener('pointerleave', (e) => this.handleMouseLeave(e), false)
     },
     configureUserStroke () {
       this.context.strokeStyle = '#006064'
