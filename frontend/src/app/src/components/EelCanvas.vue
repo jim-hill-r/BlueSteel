@@ -17,6 +17,14 @@ export default {
     this.configureCanvas()
   },
   methods: {
+    record () {
+      this.recordedPoints = []
+      this.isRecording = true
+    },
+    getRecording () {
+      this.isRecording = false
+      return this.recordedPoints
+    },
     styleCanvas () {
       this.scale = 500
       this.canvas.style.background = 'linear-gradient(30deg, #FFFFFF, #E0F7FA, #FFFFFF)'
@@ -60,17 +68,29 @@ export default {
         return
       }
       this.drawing = true
-      this.prevPos = { x: event.offsetX, y: event.offsetY }
-      this.paint(this.prevPos, this.prevPos)
+      let point = { x: event.offsetX, y: event.offsetY, type: 'start' }
+      this.paint(point, point)
+      this.prevPos = point
+      if (this.isRecording) {
+        this.recordedPoints.push(this.normalize(point))
+      }
     },
     handleMouseMove (event) {
       if (this.drawing) {
-        this.paint(this.prevPos, { x: event.offsetX, y: event.offsetY })
+        let point = { x: event.offsetX, y: event.offsetY }
+        this.paint(this.prevPos, point)
+        this.prevPos = { x: event.offsetX, y: event.offsetY }
+        if (this.isRecording) {
+          this.recordedPoints.push(this.normalize(point))
+        }
       }
-      this.prevPos = { x: event.offsetX, y: event.offsetY }
     },
     handleMouseUp (event) {
       this.drawing = false
+      let point = { x: event.offsetX, y: event.offsetY, type: 'end' }
+      if (this.isRecording) {
+        this.recordedPoints.push(this.normalize(point))
+      }
     },
     handleMouseLeave (event) {
       this.drawing = false
@@ -98,6 +118,11 @@ export default {
       let transformedX = this.scale * 0.25 * (point.x + 2)
       let transformedY = this.scale * 0.25 * (-1 * point.y + 2)
       return { x: transformedX, y: transformedY, type: point.type }
+    },
+    normalize (point) {
+      let normalizedX = ((point.x / (this.scale * 0.25)) - 2)
+      let normalizedY = ((point.y / (this.scale * 0.25)) - 2) * -1
+      return { x: normalizedX, y: normalizedY, type: point.type }
     },
     animate () {
       if (this.animationSegment < this.animationPoints.length - 2) {

@@ -1,27 +1,10 @@
 <template>
   <q-page padding>
-    <q-banner v-if="successBanner" class="bg-positive text-white">
-      Success!
-      <template v-slot:action>
-        <q-btn flat color="white" label="Dismiss" @click="successBanner = false" />
-      </template>
-    </q-banner>
-    <q-banner v-if="warningBanner" class="bg-warning text-white">
-      {{warningMessage}}
-      <template v-slot:action>
-        <q-btn flat color="white" label="Dismiss" @click="warningBanner = false" />
-      </template>
-    </q-banner>
     <div class="row justify-center">
       <div class="text-center">
-        <h4> Draw and report quality of drawing.</h4>
         <p>
-          <q-input v-model="letter" label="Letter Drawn"></q-input>
-        </p>
-        <p>
-          <q-btn color="positive" glossy label="Excellent" @click="train('excellent')" /> &nbsp;
-          <q-btn color="accent" glossy label="Good" @click="train('good')" /> &nbsp;
-          <q-btn color="negative" glossy label="Poor" @click="train('poor')" /> &nbsp;
+          <q-btn color="accent" glossy :label="recordLabel" @click="record()" /> &nbsp;
+          <q-btn color="accent" glossy label="Replay" @click="replay()" /> &nbsp;
           <q-btn color="info" glossy label="Clear" @click="clear()" />
         </p>
       </div>
@@ -42,31 +25,28 @@ export default {
   },
   data () {
     return {
-      letter: '',
-      successBanner: false,
-      warningBanner: false,
-      warningMessage: 'There was an issue saving.'
+      recordLabel: 'Record'
     }
   },
   methods: {
-    train () {
-      this.successBanner = false
-      if (this.letter.length < 1) {
-        this.warningMessage = 'Please specify letter drawn.'
-        this.warningBanner = true
-        return
+    record () {
+      if (this.isRecording) {
+        this.isRecording = false
+        this.recordLabel = 'Record'
+        this.recording = this.$refs.whiteboard.getRecording()
+        console.log(this.recording)
+      } else {
+        this.isRecording = true
+        this.recordLabel = 'Stop'
+        this.$refs.whiteboard.record()
       }
-      if (this.letter.length > 1) {
-        this.warningMessage = 'Please specify on a single letter.'
-        this.warningBanner = true
-        return
-      }
-      this.warningBanner = false
-      this.successBanner = true
+    },
+    replay () {
+      this.clear()
+      this.$refs.whiteboard.draw(this.recording, true)
     },
     clear () {
       this.$refs.whiteboard.clear()
-      this.letter = ''
     }
   }
 }
