@@ -5,7 +5,7 @@
         <h4> Draw the letter {{currentLetter}}! </h4>
         <p> {{feedbackMessage}} </p>
         <p>
-          <q-btn v-if="showDone()" color="accent" glossy label="Done!" @click="done()" />
+          <q-btn v-if="showDone" color="accent" glossy label="Done!" @click="done()" />
         </p>
       </div>
     </div>
@@ -32,15 +32,20 @@ export default {
     }
   },
   mounted: function () {
-    this.currentLetter = String.fromCharCode(97 + Math.floor(Math.random() * 26))
-    this.demonstrateLetter(this.currentLetter)
+    this.done()
+    this.feedbackMessage = ''
   },
   methods: {
     done () {
+      this.showDone = false
       this.currentLetter = this.getNextLetter()
       this.feedbackMessage = this.getFeedback()
       this.$refs.whiteboard.clear()
       this.demonstrateLetter(this.currentLetter)
+      setTimeout(() => {
+        this.showDone = true
+        this.feedbackMessage = ''
+      }, 3000)
     },
     getNextLetter () {
       return String.fromCharCode(97 + Math.floor(Math.random() * 26))
