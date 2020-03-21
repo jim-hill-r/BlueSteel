@@ -18,9 +18,10 @@ export default {
   },
   methods: {
     styleCanvas () {
+      this.scale = 500
       this.canvas.style.background = 'linear-gradient(30deg, #FFFFFF, #E0F7FA, #FFFFFF)'
-      this.canvas.width = 500
-      this.canvas.height = 500
+      this.canvas.width = this.scale
+      this.canvas.height = this.scale
       this.canvas.style.border = '1px solid #E0F7FA'
       this.configureUserStroke()
     },
@@ -45,7 +46,9 @@ export default {
       this.context.lineCap = 'round'
     },
     handleMouseDown (event) {
-      this.configureUserStroke()
+      if (this.isAnimating) {
+        return
+      }
       this.drawing = true
       this.prevPos = { x: event.offsetX, y: event.offsetY }
       this.paint(this.prevPos, this.prevPos)
@@ -72,10 +75,32 @@ export default {
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
     },
     draw (points) {
-      this.configureEelStroke()
-      for (let i = 1; i < points.length; i++) {
-        this.paint(points[i - 1], points[i])
+      if (!points || points.length < 0) {
+        return
       }
+      this.isAnimating = true
+      this.configureEelStroke()
+      this.animationSegment = 0
+      this.animationPoints = points.map(this.transform)
+      this.animate()
+    },
+    transform (point) {
+      let transformedX = this.scale * 0.25 * (point.x + 2)
+      let transformedY = this.scale * 0.25 * (-1 * point.y + 2)
+      return { x: transformedX, y: transformedY }
+    },
+    animate () {
+      if (this.animationSegment < this.animationPoints.length - 2) {
+        window.requestAnimationFrame(this.animate)
+      } else {
+        window.requestAnimationFrame(this.finishAnimation)
+      }
+      this.paint(this.animationPoints[this.animationSegment], this.animationPoints[this.animationSegment + 1])
+      this.animationSegment++
+    },
+    finishAnimation () {
+      this.configureUserStroke()
+      this.isAnimating = false
     }
   }
 }
