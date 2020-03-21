@@ -45,6 +45,16 @@ export default {
       this.context.lineWidth = 8
       this.context.lineCap = 'round'
     },
+    configureStartStroke () {
+      this.context.strokeStyle = 'green'
+      this.context.lineWidth = 25
+      this.context.lineCap = 'round'
+    },
+    configureEndStroke () {
+      this.context.strokeStyle = 'red'
+      this.context.lineWidth = 25
+      this.context.lineCap = 'round'
+    },
     handleMouseDown (event) {
       if (this.isAnimating) {
         return
@@ -74,20 +84,20 @@ export default {
     clear () {
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
     },
-    draw (points) {
+    draw (points, includePath) {
       if (!points || points.length < 0) {
         return
       }
       this.isAnimating = true
-      this.configureEelStroke()
       this.animationSegment = 0
       this.animationPoints = points.map(this.transform)
+      this.animationPaintPath = includePath
       this.animate()
     },
     transform (point) {
       let transformedX = this.scale * 0.25 * (point.x + 2)
       let transformedY = this.scale * 0.25 * (-1 * point.y + 2)
-      return { x: transformedX, y: transformedY }
+      return { x: transformedX, y: transformedY, type: point.type }
     },
     animate () {
       if (this.animationSegment < this.animationPoints.length - 2) {
@@ -95,7 +105,19 @@ export default {
       } else {
         window.requestAnimationFrame(this.finishAnimation)
       }
-      this.paint(this.animationPoints[this.animationSegment], this.animationPoints[this.animationSegment + 1])
+      let doPaint = this.animationPaintPath
+      if (this.animationPoints[this.animationSegment].type === 'start') {
+        this.configureStartStroke()
+        doPaint = true
+      } else if (this.animationPoints[this.animationSegment + 1].type === 'end') {
+        this.configureEndStroke()
+        doPaint = true
+      } else {
+        this.configureEelStroke()
+      }
+      if (doPaint) {
+        this.paint(this.animationPoints[this.animationSegment], this.animationPoints[this.animationSegment + 1])
+      }
       this.animationSegment++
     },
     finishAnimation () {

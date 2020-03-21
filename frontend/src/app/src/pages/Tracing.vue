@@ -54,7 +54,7 @@ export default {
       return 'Great Job!'
     },
     demonstrateLetter (letter) {
-      this.$refs.whiteboard.draw(letterPaths['o'])
+      this.$refs.whiteboard.draw(letterPaths['o'], true)
     }
   }
 }
