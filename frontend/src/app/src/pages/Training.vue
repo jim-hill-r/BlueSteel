@@ -52,7 +52,6 @@ export default {
         this.isRecording = false
         this.recordLabel = 'Record'
         this.recording = this.$refs.whiteboard.getRecording()
-        console.log(this.recording)
       } else {
         this.isRecording = true
         this.recordLabel = 'Stop'
