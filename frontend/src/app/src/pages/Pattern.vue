@@ -19,16 +19,20 @@
 import EelCanvas from '../components/EelCanvas.vue'
 
 export default {
-  name: 'PageTracing',
+  name: 'PagePattern',
   components: {
     EelCanvas
   },
   data () {
     return {
-      currentLetter: this.getNextLetter(),
-      feedbackMessge: '',
+      currentLetter: '',
+      nextLetter: '',
+      feedbackMessage: '',
       showDone: false
     }
+  },
+  created: function () {
+    this.$store.dispatch('common/fetchPatterns')
   },
   mounted: function () {
     this.done()
@@ -53,7 +57,9 @@ export default {
       return 'Great Job!'
     },
     demonstrateLetter (letter) {
-      this.$refs.whiteboard.draw(this.$store.state.common.patterns[letter].path, false)
+      if (this.$store.state.common.patterns['test']) {
+        this.$refs.whiteboard.draw(this.$store.state.common.patterns[letter].path, false)
+      }
     }
   }
 }

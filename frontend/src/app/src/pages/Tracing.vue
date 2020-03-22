@@ -32,8 +32,7 @@ export default {
     }
   },
   created: function () {
-    this.$store.dispatch('common/fetchAvailablePatterns')
-    this.preloadNextState()
+    this.$store.dispatch('common/fetchPatterns')
   },
   mounted: function () {
     this.done()
@@ -42,8 +41,7 @@ export default {
   methods: {
     done () {
       this.showDone = false
-      this.currentLetter = this.nextLetter
-      this.preloadNextState()
+      this.currentLetter = this.getNextLetter()
       this.feedbackMessage = this.getFeedback()
       this.$refs.whiteboard.clear()
       this.demonstrateLetter(this.currentLetter)
@@ -59,11 +57,9 @@ export default {
       return 'Great Job!'
     },
     demonstrateLetter (letter) {
-      this.$refs.whiteboard.draw(this.$store.state.common.patterns['test'], true)
-    },
-    preloadNextState () {
-      this.nextLetter = this.getNextLetter()
-      this.$store.dispatch('common/fetchPattern', 'test')
+      if (this.$store.state.common.patterns['test']) {
+        this.$refs.whiteboard.draw(this.$store.state.common.patterns[letter].path, true)
+      }
     }
   }
 }

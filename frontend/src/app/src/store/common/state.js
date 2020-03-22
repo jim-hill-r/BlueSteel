@@ -1,4 +1,4 @@
 export default {
-  patterns: {},
-  patternList: []
+  patternsLoading: true,
+  patterns: {}
 }

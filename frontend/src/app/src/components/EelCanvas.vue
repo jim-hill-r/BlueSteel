@@ -137,6 +137,8 @@ export default {
       } else if (this.animationPoints[this.animationSegment + 1].type === 'end') {
         this.configureEndStroke()
         doPaint = true
+      } else if (this.animationPoints[this.animationSegment].type === 'end') {
+        doPaint = false
       } else {
         this.configureEelStroke()
       }
