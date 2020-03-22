@@ -17,7 +17,6 @@
 
 <script>
 import EelCanvas from '../components/EelCanvas.vue'
-import letterPaths from '../assets/letterPaths.json'
 
 export default {
   name: 'PageTracing',
@@ -54,7 +53,7 @@ export default {
       return 'Great Job!'
     },
     demonstrateLetter (letter) {
-      this.$refs.whiteboard.draw(letterPaths['o'], false)
+      this.$refs.whiteboard.draw(this.$store.state.common.patterns[letter].path, false)
     }
   }
 }

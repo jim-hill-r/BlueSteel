@@ -17,7 +17,6 @@
 
 <script>
 import EelCanvas from '../components/EelCanvas.vue'
-import letterPaths from '../assets/letterPaths.json'
 
 export default {
   name: 'PageTracing',
@@ -26,10 +25,15 @@ export default {
   },
   data () {
     return {
-      currentLetter: this.getNextLetter(),
-      feedbackMessge: '',
+      currentLetter: '',
+      nextLetter: '',
+      feedbackMessage: '',
       showDone: false
     }
+  },
+  created: function () {
+    this.$store.dispatch('common/fetchAvailablePatterns')
+    this.preloadNextState()
   },
   mounted: function () {
     this.done()
@@ -38,7 +42,8 @@ export default {
   methods: {
     done () {
       this.showDone = false
-      this.currentLetter = this.getNextLetter()
+      this.currentLetter = this.nextLetter
+      this.preloadNextState()
       this.feedbackMessage = this.getFeedback()
       this.$refs.whiteboard.clear()
       this.demonstrateLetter(this.currentLetter)
@@ -54,7 +59,11 @@ export default {
       return 'Great Job!'
     },
     demonstrateLetter (letter) {
-      this.$refs.whiteboard.draw(letterPaths['o'], true)
+      this.$refs.whiteboard.draw(this.$store.state.common.patterns['test'], true)
+    },
+    preloadNextState () {
+      this.nextLetter = this.getNextLetter()
+      this.$store.dispatch('common/fetchPattern', 'test')
     }
   }
 }

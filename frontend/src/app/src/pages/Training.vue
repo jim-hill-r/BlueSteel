@@ -42,7 +42,7 @@ export default {
       letterTrained: 'a',
       letterQuality: 'Excellent',
       showDialog: false,
-      letterOptions: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
+      letterOptions: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'test'],
       qualityOptions: ['Excellent', 'Good', 'Okay', 'Poor', 'Egregious']
     }
   },
@@ -67,30 +67,12 @@ export default {
     },
     save () {
       this.showDialog = false
-      if (this.letterTrained.length !== 1) {
-        return
-      }
-      let now = new Date()
-      var timestamp = Date.UTC(
-        now.getUTCFullYear(),
-        now.getUTCMonth(),
-        now.getUTCDate(),
-        now.getUTCHours(),
-        now.getUTCMinutes(),
-        now.getUTCSeconds())
-      let data = {
+      let pattern = {
         letter: this.letterTrained,
         quality: this.letterQuality,
         path: this.recording
       }
-      let config = {
-        headers: {
-          'content-type': 'application/json',
-          'x-amz-acl': 'public-read'
-        }
-      }
-      let filename = `${timestamp}.json`
-      this.$axios.put(`https://eel3-data.s3.us-east-2.amazonaws.com/patterns/${this.letterTrained}/${filename}`, data, config)
+      this.$store.dispatch('common/uploadPattern', pattern)
     }
   }
 }
