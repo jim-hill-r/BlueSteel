@@ -57,7 +57,7 @@ export default {
       return 'Great Job!'
     },
     demonstrateLetter (letter) {
-      if (this.$store.state.common.patterns['test']) {
+      if (this.$store.state.common.patterns[letter]) {
         this.$refs.whiteboard.draw(this.$store.state.common.patterns[letter].path, true)
       }
     }
