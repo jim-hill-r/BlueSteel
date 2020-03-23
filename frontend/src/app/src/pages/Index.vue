@@ -10,7 +10,7 @@
         <h4 style="font-family: 'Chilanka', cursive; color:#4fc3f7"> Writing made simple! </h4>
       </div>
       <div class="row justify-center">
-        <q-btn color="accent" label="Begin" to="freeform" />
+        <q-btn color="accent" label="Begin" to="tracing" />
       </div>
     </div>
   </q-page>

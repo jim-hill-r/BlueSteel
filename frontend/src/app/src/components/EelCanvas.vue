@@ -5,6 +5,9 @@
 <script>
 export default {
   name: 'EelCanvas',
+  props: {
+    active: Boolean
+  },
   mounted: function () {
     this.canvas = this.$refs.mainCanvas
     this.context = this.canvas.getContext('2d')
@@ -75,7 +78,7 @@ export default {
       this.context.setLineDash([this.scale * 0.04, this.scale * 0.02875])
     },
     handleMouseDown (event) {
-      if (this.isAnimating) {
+      if (this.isAnimating || !this.active) {
         return
       }
       this.drawing = true
