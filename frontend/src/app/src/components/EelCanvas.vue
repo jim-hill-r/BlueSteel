@@ -23,11 +23,10 @@ export default {
     },
     styleCanvas () {
       this.scale = 500
-      this.canvas.style.background = 'linear-gradient(30deg, #FFFFFF, #E0F7FA, #FFFFFF)'
+      this.canvas.style.background = 'linear-gradient(180deg, #E0F7FA, #FFFFFF, #E0F7FA)'
       this.canvas.width = this.scale
       this.canvas.height = this.scale * 0.6
       this.canvas.style.border = '1px solid #E0F7FA'
-      this.configureUserStroke()
     },
     configureCanvas () {
       this.canvas.addEventListener('mousedown', (e) => this.handleMouseDown(e), false)
@@ -43,26 +42,37 @@ export default {
       this.context.strokeStyle = '#006064'
       this.context.lineWidth = 15
       this.context.lineCap = 'round'
+      this.context.setLineDash([])
     },
     configureEelStroke () {
       this.context.strokeStyle = '#FFD54F'
       this.context.lineWidth = 8
       this.context.lineCap = 'round'
+      this.context.setLineDash([])
     },
     configureStartStroke () {
       this.context.strokeStyle = 'green'
       this.context.lineWidth = 25
       this.context.lineCap = 'round'
+      this.context.setLineDash([])
     },
     configureEndStroke () {
       this.context.strokeStyle = 'red'
       this.context.lineWidth = 25
       this.context.lineCap = 'round'
+      this.context.setLineDash([])
     },
     configureGuidesStroke () {
       this.context.strokeStyle = '#3D4849'
       this.context.lineWidth = 4
       this.context.lineCap = 'round'
+      this.context.setLineDash([])
+    },
+    configureMiddleGuideStroke () {
+      this.context.strokeStyle = '#3D4849'
+      this.context.lineWidth = 2
+      this.context.lineCap = 'round'
+      this.context.setLineDash([this.scale * 0.04, this.scale * 0.02875])
     },
     handleMouseDown (event) {
       if (this.isAnimating) {
@@ -110,9 +120,9 @@ export default {
       let lowerLineY = this.scale * 0.5
       this.paint({ x: 0, y: lowerLineY }, { x: this.scale, y: lowerLineY })
       this.paint({ x: 0, y: upperLineY }, { x: this.scale, y: upperLineY })
-      for (let i = 0; i < this.scale; i = i + this.scale * 0.1) {
-        this.paint({ x: i, y: middleLineY }, { x: i + this.scale * 0.05, y: middleLineY })
-      }
+      this.configureMiddleGuideStroke()
+      this.paint({ x: 0, y: middleLineY }, { x: this.scale, y: middleLineY })
+      this.configureUserStroke()
     },
     draw (points, includePath) {
       if (!points || points.length < 0) {
