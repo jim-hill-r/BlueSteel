@@ -13,7 +13,8 @@ export function compare (pathA, pathB) {
   for (let i = 0; i < pathB.length - 1; i++) {
     totalB += dist(pathB[i], pathB[i + 1])
   }
-  if ((Math.abs(totalA - totalB) / totalA) < 0.1) {
+  let error = Math.abs(totalA - totalB) / totalA
+  if (error < 0.5) {
     return true
   }
   return false
