@@ -27,7 +27,7 @@ export default {
     styleCanvas () {
       this.scale = 500
       this.canvas.style.background = 'linear-gradient(180deg, #E0F7FA, #FFFFFF, #E0F7FA)'
-      this.canvas.width = this.scale
+      this.canvas.width = this.scale * 0.6
       this.canvas.height = this.scale * 0.6
       this.canvas.style.border = '1px solid #E0F7FA'
     },
