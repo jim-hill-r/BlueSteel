@@ -3,11 +3,6 @@
 </template>
 
 <script>
-import Paintable from 'vue-paintable'
-import Vue from 'vue'
-
-Vue.use(Paintable)
-
 export default {
   name: 'EelCanvas',
   mounted: function () {
@@ -15,6 +10,7 @@ export default {
     this.context = this.canvas.getContext('2d')
     this.styleCanvas()
     this.configureCanvas()
+    this.clear()
   },
   methods: {
     record () {
@@ -29,7 +25,7 @@ export default {
       this.scale = 500
       this.canvas.style.background = 'linear-gradient(30deg, #FFFFFF, #E0F7FA, #FFFFFF)'
       this.canvas.width = this.scale
-      this.canvas.height = this.scale
+      this.canvas.height = this.scale * 0.6
       this.canvas.style.border = '1px solid #E0F7FA'
       this.configureUserStroke()
     },
@@ -61,6 +57,11 @@ export default {
     configureEndStroke () {
       this.context.strokeStyle = 'red'
       this.context.lineWidth = 25
+      this.context.lineCap = 'round'
+    },
+    configureGuidesStroke () {
+      this.context.strokeStyle = '#3D4849'
+      this.context.lineWidth = 4
       this.context.lineCap = 'round'
     },
     handleMouseDown (event) {
@@ -103,6 +104,15 @@ export default {
     },
     clear () {
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
+      this.configureGuidesStroke()
+      let upperLineY = this.scale * 0.1
+      let middleLineY = this.scale * 0.3
+      let lowerLineY = this.scale * 0.5
+      this.paint({ x: 0, y: lowerLineY }, { x: this.scale, y: lowerLineY })
+      this.paint({ x: 0, y: upperLineY }, { x: this.scale, y: upperLineY })
+      for (let i = 0; i < this.scale; i = i + this.scale * 0.1) {
+        this.paint({ x: i, y: middleLineY }, { x: i + this.scale * 0.05, y: middleLineY })
+      }
     },
     draw (points, includePath) {
       if (!points || points.length < 0) {
