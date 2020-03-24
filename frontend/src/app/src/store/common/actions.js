@@ -1,4 +1,4 @@
-import { normalizePath } from '../../logic/normalize'
+import * as path from '../../logic/path'
 import { axios } from 'boot/axios'
 
 export function fetchPatterns (ctx) {
@@ -12,7 +12,7 @@ export function fetchPatterns (ctx) {
 }
 
 export function uploadPattern (ctx, pattern) {
-  pattern.path = normalizePath(pattern.path)
+  pattern.path = path.simplify(pattern.path)
   pattern.quality = pattern.quality.toLowerCase()
 
   let now = new Date()
