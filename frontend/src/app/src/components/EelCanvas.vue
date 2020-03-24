@@ -3,6 +3,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'EelCanvas',
   props: {
@@ -22,13 +23,31 @@ export default {
     },
     getRecording () {
       this.isRecording = false
-      return this.recordedPoints
+      return {
+        dimensions: {
+          mm: {
+            height: 0,
+            width: 0
+          },
+          pixel: {
+            topMargin: this.canvasTopMargin,
+            topWriting: this.canvasTopWritingArea,
+            bottomWriting: this.canvasBottomWritingArea,
+            bottomMargin: this.canvasBottomMargin,
+            width: this.canvas.width
+          }
+        },
+        path: this.recordedPoints
+      }
     },
     styleCanvas () {
-      this.scale = 500
+      this.canvasTopMargin = 50
+      this.canvasTopWritingArea = 100
+      this.canvasBottomWritingArea = 100
+      this.canvasBottomMargin = 100
+      this.canvas.width = 340
+      this.canvas.height = this.canvasTopMargin + this.canvasTopWritingArea + this.canvasBottomWritingArea + this.canvasBottomMargin
       this.canvas.style.background = 'linear-gradient(180deg, #E0F7FA, #FFFFFF, #E0F7FA)'
-      this.canvas.width = this.scale * 0.6
-      this.canvas.height = this.scale * 0.6
       this.canvas.style.border = '1px solid #E0F7FA'
     },
     configureCanvas () {
@@ -75,7 +94,7 @@ export default {
       this.context.strokeStyle = '#3D4849'
       this.context.lineWidth = 2
       this.context.lineCap = 'round'
-      this.context.setLineDash([this.scale * 0.04, this.scale * 0.02875])
+      this.context.setLineDash([this.canvas.width * 0.04, this.canvas.width * 0.02875])
     },
     handleMouseDown (event) {
       if (this.isAnimating || !this.active) {
@@ -86,7 +105,7 @@ export default {
       this.paint(point, point)
       this.prevPos = point
       if (this.isRecording) {
-        this.recordedPoints.push(this.normalize(point))
+        this.recordedPoints.push(point)
       }
     },
     handleMouseMove (event) {
@@ -95,7 +114,7 @@ export default {
         this.paint(this.prevPos, point)
         this.prevPos = { x: event.offsetX, y: event.offsetY }
         if (this.isRecording) {
-          this.recordedPoints.push(this.normalize(point))
+          this.recordedPoints.push(point)
         }
       }
     },
@@ -103,7 +122,7 @@ export default {
       this.drawing = false
       let point = { x: event.offsetX, y: event.offsetY, type: 'end' }
       if (this.isRecording) {
-        this.recordedPoints.push(this.normalize(point))
+        this.recordedPoints.push(point)
       }
     },
     handleMouseLeave (event) {
@@ -118,13 +137,13 @@ export default {
     clear () {
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
       this.configureGuidesStroke()
-      let upperLineY = this.scale * 0.1
-      let middleLineY = this.scale * 0.3
-      let lowerLineY = this.scale * 0.5
-      this.paint({ x: 0, y: lowerLineY }, { x: this.scale, y: lowerLineY })
-      this.paint({ x: 0, y: upperLineY }, { x: this.scale, y: upperLineY })
+      let upperLineY = this.canvasTopMargin
+      let middleLineY = upperLineY + this.canvasTopWritingArea
+      let lowerLineY = middleLineY + this.canvasBottomWritingArea
+      this.paint({ x: 0, y: lowerLineY }, { x: this.canvas.width, y: lowerLineY })
+      this.paint({ x: 0, y: upperLineY }, { x: this.canvas.width, y: upperLineY })
       this.configureMiddleGuideStroke()
-      this.paint({ x: 0, y: middleLineY }, { x: this.scale, y: middleLineY })
+      this.paint({ x: 0, y: middleLineY }, { x: this.canvas.width, y: middleLineY })
       this.configureUserStroke()
     },
     draw (points, includePath) {
@@ -133,19 +152,9 @@ export default {
       }
       this.isAnimating = true
       this.animationSegment = 0
-      this.animationPoints = points.map(this.transform)
+      this.animationPoints = points
       this.animationPaintPath = includePath
       this.animate()
-    },
-    transform (point) {
-      let transformedX = this.scale * 0.25 * (point.x + 2)
-      let transformedY = this.scale * 0.25 * (-1 * point.y + 2)
-      return { x: transformedX, y: transformedY, type: point.type }
-    },
-    normalize (point) {
-      let normalizedX = ((point.x / (this.scale * 0.25)) - 2)
-      let normalizedY = ((point.y / (this.scale * 0.25)) - 2) * -1
-      return { x: normalizedX, y: normalizedY, type: point.type }
     },
     animate () {
       if (this.animationSegment < this.animationPoints.length - 2) {

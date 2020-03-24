@@ -53,7 +53,7 @@ export default {
       instructions: 'Welcome',
       subtext: 'Click record when you are ready to begin.',
       isCanvasActive: false,
-      recording: [],
+      recording: {},
       letter: 'a',
       quality: 'Excellent',
       showDialog: false,
@@ -80,7 +80,7 @@ export default {
       this.$refs.whiteboard.clear()
       this.instructions = 'Replaying...'
       this.subtext = '...'
-      this.$refs.whiteboard.draw(this.recording, true)
+      this.$refs.whiteboard.draw(this.recording.path, true)
       setTimeout(() => {
         this.instructions = 'Save your recording'
         this.subtext = 'Press save to upload your recording to the database.'
@@ -99,7 +99,8 @@ export default {
       let pattern = {
         letter: this.letter,
         quality: this.quality,
-        path: this.recording
+        dimensions: this.recording.dimensions,
+        path: this.recording.path
       }
       this.$store.dispatch('common/uploadPattern', pattern)
       this.instructions = 'Saved'

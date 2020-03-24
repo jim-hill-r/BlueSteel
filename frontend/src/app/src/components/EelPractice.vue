@@ -65,7 +65,7 @@ export default {
       }, 3000)
     },
     validateSuccess () {
-      let recording = this.$refs.whiteboard.getRecording()
+      let recording = this.$refs.whiteboard.getRecording().path
       let currentPattern = this.$store.state.common.patterns[this.letter]
       if (!currentPattern || !recording || recording.length < 1) {
         this.loading = true
