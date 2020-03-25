@@ -25,30 +25,36 @@ export default {
       this.isRecording = false
       return {
         dimensions: {
-          mm: {
-            height: 0,
-            width: 0
-          },
-          pixel: {
-            topMargin: this.canvasTopMargin,
-            topWriting: this.canvasTopWritingArea,
-            bottomWriting: this.canvasBottomWritingArea,
-            bottomMargin: this.canvasBottomMargin,
-            width: this.canvas.width
-          }
+          heightMM: this.heightInMM,
+          heightPixels: this.canvas.height,
+          widthPixels: this.canvas.width,
+          upperGuidePixels: this.upperLineY,
+          middleGuidePixels: this.middleLineY,
+          lowerGuidePixels: this.lowerLineY,
+          lowestGuidePixels: this.lowestLineY
         },
         path: this.recordedPoints
       }
     },
     styleCanvas () {
-      this.canvasTopMargin = 50
-      this.canvasTopWritingArea = 100
-      this.canvasBottomWritingArea = 100
-      this.canvasBottomMargin = 100
-      this.canvas.width = 340
-      this.canvas.height = this.canvasTopMargin + this.canvasTopWritingArea + this.canvasBottomWritingArea + this.canvasBottomMargin
-      this.canvas.style.background = 'linear-gradient(180deg, #E0F7FA, #FFFFFF, #E0F7FA)'
+      this.heightInMM = 85
+      const pixelRatio = 1 // window.devicePixelRatio || 1
+      this.canvas.style.width = '300px'
+      this.canvas.style.height = `${this.heightInMM}mm`
+      this.canvas.style.height = `${this.canvas.clientHeight * 7 / 5}px`
+      this.canvas.width = this.canvas.clientWidth * pixelRatio
+      this.canvas.height = this.canvas.clientHeight * pixelRatio
+      const canvasTopMarginRatio = 5 / this.heightInMM
+      const canvasTopWritingAreaRatio = 25 / this.heightInMM
+      const canvasWritingAreaRatio = 25 / this.heightInMM
+      const canvasBottomWritingAreaRatio = 25 / this.heightInMM
+      this.upperLineY = canvasTopMarginRatio * this.canvas.height
+      this.middleLineY = this.upperLineY + canvasTopWritingAreaRatio * this.canvas.height
+      this.lowerLineY = this.middleLineY + canvasWritingAreaRatio * this.canvas.height
+      this.lowestLineY = this.lowerLineY + canvasBottomWritingAreaRatio * this.canvas.height
+      this.canvas.style.background = 'linear-gradient(180deg, #f7feff, #FFFFFF, #f7feff)'
       this.canvas.style.border = '1px solid #E0F7FA'
+      console.log(this.canvas.width)
     },
     configureCanvas () {
       this.canvas.addEventListener('mousedown', (e) => this.handleMouseDown(e), false)
@@ -86,15 +92,21 @@ export default {
     },
     configureGuidesStroke () {
       this.context.strokeStyle = '#3D4849'
-      this.context.lineWidth = 4
+      this.context.lineWidth = 6
       this.context.lineCap = 'round'
       this.context.setLineDash([])
     },
     configureMiddleGuideStroke () {
       this.context.strokeStyle = '#3D4849'
-      this.context.lineWidth = 2
+      this.context.lineWidth = 3
       this.context.lineCap = 'round'
       this.context.setLineDash([this.canvas.width * 0.04, this.canvas.width * 0.02875])
+    },
+    configureLowestGuideStroke () {
+      this.context.strokeStyle = '#667b7d'
+      this.context.lineWidth = 4
+      this.context.lineCap = 'round'
+      this.context.setLineDash([])
     },
     handleMouseDown (event) {
       if (this.isAnimating || !this.active) {
@@ -104,6 +116,7 @@ export default {
       let point = { x: event.offsetX, y: event.offsetY, type: 'start' }
       this.paint(point, point)
       this.prevPos = point
+      console.log(event)
       if (this.isRecording) {
         this.recordedPoints.push(point)
       }
@@ -137,13 +150,12 @@ export default {
     clear () {
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
       this.configureGuidesStroke()
-      let upperLineY = this.canvasTopMargin
-      let middleLineY = upperLineY + this.canvasTopWritingArea
-      let lowerLineY = middleLineY + this.canvasBottomWritingArea
-      this.paint({ x: 0, y: lowerLineY }, { x: this.canvas.width, y: lowerLineY })
-      this.paint({ x: 0, y: upperLineY }, { x: this.canvas.width, y: upperLineY })
+      this.paint({ x: 0, y: this.lowerLineY }, { x: this.canvas.width, y: this.lowerLineY })
+      this.paint({ x: 0, y: this.upperLineY }, { x: this.canvas.width, y: this.upperLineY })
+      this.configureLowestGuideStroke()
+      this.paint({ x: 0, y: this.lowestLineY }, { x: this.canvas.width, y: this.lowestLineY })
       this.configureMiddleGuideStroke()
-      this.paint({ x: 0, y: middleLineY }, { x: this.canvas.width, y: middleLineY })
+      this.paint({ x: 0, y: this.middleLineY }, { x: this.canvas.width, y: this.middleLineY })
       this.configureUserStroke()
     },
     draw (points, includePath) {
