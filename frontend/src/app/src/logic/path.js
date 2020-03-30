@@ -12,8 +12,17 @@ export function size (path) {
   return Math.max([maxs.x - mins.x, maxs.y - mins.y])
 }
 
-export function simplify (path) {
-  return path
+export function simplify (originalPath, desiredPoints) {
+  let p = originalPath.slice(0, originalPath.length)
+  let ptsToBeRemoved = p.length - desiredPoints
+  let incrementToRemove = p.length / ptsToBeRemoved
+  for (var i = p.length - 1; i > 0; i = i - incrementToRemove) {
+    let index = Math.floor(i)
+    if (p[index].type !== 'start' && p[index].type !== 'end' && p[index].type !== 'critical') {
+      p.splice(index, 1)
+    }
+  }
+  return p
 }
 
 export function smooth (path) {

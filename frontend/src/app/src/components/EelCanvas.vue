@@ -54,7 +54,6 @@ export default {
       this.lowestLineY = this.lowerLineY + canvasBottomWritingAreaRatio * this.canvas.height
       this.canvas.style.background = 'linear-gradient(180deg, #f7feff, #FFFFFF, #f7feff)'
       this.canvas.style.border = '1px solid #E0F7FA'
-      console.log(this.canvas.width)
     },
     configureCanvas () {
       this.canvas.addEventListener('mousedown', (e) => this.handleMouseDown(e), false)
@@ -116,7 +115,6 @@ export default {
       let point = { x: event.offsetX, y: event.offsetY, type: 'start' }
       this.paint(point, point)
       this.prevPos = point
-      console.log(event)
       if (this.isRecording) {
         this.recordedPoints.push(point)
       }
