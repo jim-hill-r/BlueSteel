@@ -57,7 +57,7 @@ export default {
       letter: 'a',
       quality: 'Excellent',
       showDialog: false,
-      letterOptions: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
+      letterOptions: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
       qualityOptions: ['Excellent', 'Good', 'Okay', 'Poor', 'Egregious']
     }
   },
@@ -65,7 +65,7 @@ export default {
     record () {
       this.$refs.whiteboard.record()
       this.isCanvasActive = true
-      this.instructions = 'Draw a lowercase letter'
+      this.instructions = 'Draw a letter'
       this.subtext = 'The slower your pace, the more data will be collected.'
       this.step = 'record'
     },

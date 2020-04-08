@@ -197,6 +197,7 @@ export default {
     finishAnimation () {
       this.configureUserStroke()
       this.isAnimating = false
+      this.$emit('animationcomplete')
     }
   }
 }

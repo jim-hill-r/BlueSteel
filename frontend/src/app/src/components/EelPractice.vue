@@ -6,7 +6,10 @@
           <q-card-section class="bg-accent text-white">
             <div class="text-h6">
               <span v-if="atStart"> Welcome! </span>
-              <span v-if="!atStart && letter != null"> Draw the letter "{{letter}}" </span>
+              <span v-if="!atStart && letter != null"> Draw the
+                <span v-if="level === 'word'"> word </span>
+                <span v-if="level !== 'word'"> letter </span>
+              "{{letter}}" </span>
               <span v-if="!atStart && letter == null"> You are ready for the next level! </span>
             </div>
             <div class="text-subtitle2">
@@ -24,7 +27,7 @@
         </q-card>
         <q-card class="my-card">
           <q-card-section>
-            <EelCanvas :active="isCanvasActive" ref="whiteboard"></EelCanvas>
+            <EelCanvas v-on:animationcomplete="demoComplete()" :active="isCanvasActive" ref="whiteboard"></EelCanvas>
           </q-card-section>
         </q-card>
       </div>
@@ -51,9 +54,6 @@ export default {
       feedback: 'Have fun!'
     }
   },
-  created: function () {
-    this.$store.dispatch('common/fetchPatterns')
-  },
   computed: {
     complete: {
       get () {
@@ -69,8 +69,11 @@ export default {
   methods: {
     start () {
       this.atStart = false
-      this.$store.dispatch('common/startPractice')
-      this.refresh()
+      this.$store.dispatch('common/startPractice', this.level)
+      setTimeout(() => {
+        // TODO: Need to wait to fetch first letter... fix this
+        this.refresh()
+      }, 1000)
     },
     done () {
       let update = {
@@ -89,30 +92,34 @@ export default {
     refresh () {
       this.$refs.whiteboard.clear()
       this.demonstrateLetter()
-      this.$refs.whiteboard.record()
-      this.isCanvasActive = true
-      setTimeout(() => {
-        this.feedback = 'Begin now.'
-      }, 3000)
     },
     validateSuccess () {
       let recording = this.$refs.whiteboard.getRecording().path
-      let currentPattern = this.$store.state.common.patterns[this.letter]
-      if (compare(currentPattern.path, recording)) {
-        return true
+      for (let i = 0; i < this.letter.length; i++) {
+        let currentPattern = this.$store.state.common.patterns[this.letter[i]]
+        if (!compare(currentPattern.path, recording)) {
+          return false
+        }
       }
-      return false
+      return true
     },
     demonstrateLetter () {
       if (this.$store.state.common.patterns[this.letter]) {
-        if (this.level === 'freeform') {
-          // Do nothing
+        if (this.level === 'tracing') {
+          this.$refs.whiteboard.draw(this.$store.state.common.patterns[this.letter].path, true)
         } else if (this.level === 'pattern') {
           this.$refs.whiteboard.draw(this.$store.state.common.patterns[this.letter].path, false)
         } else {
-          this.$refs.whiteboard.draw(this.$store.state.common.patterns[this.letter].path, true)
+          setTimeout(() => {
+            this.demoComplete()
+          }, 1500)
         }
       }
+    },
+    demoComplete (event) {
+      this.feedback = 'Begin'
+      this.$refs.whiteboard.record()
+      this.isCanvasActive = true
     },
     go () {
       if (this.level === 'tracing') {

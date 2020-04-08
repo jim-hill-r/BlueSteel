@@ -3,16 +3,15 @@ import { axios } from 'boot/axios'
 
 const RETRY_LIMIT = 3
 const STABLIZE_COUNT = 3
-const ACTIVATE_COUNT = 4
+const REINTRODUCE_COUNT = 8
 
-export function fetchPatterns (ctx) {
-  let letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-  letters.forEach(letter => {
+export function fetchLetter (ctx, letter) {
+  if (ctx.state.patterns[letter] == null) {
     axios.get(`https://eel3-data.s3.us-east-2.amazonaws.com/patterns/${letter}/master.json`)
       .then(res => {
         ctx.commit('setPattern', res.data)
-      })
-  })
+      }).catch(err => err) // TODO: Properly catch error
+  }
 }
 
 export function uploadPattern (ctx, pattern) {
@@ -36,8 +35,8 @@ export function uploadPattern (ctx, pattern) {
   }
 }
 
-export function startPractice (ctx) {
-  ctx.commit('resetState')
+export function startPractice (ctx, level) {
+  ctx.commit('resetState', level)
   ctx.dispatch('nextLetter')
 }
 
@@ -47,11 +46,9 @@ export function practiceAttempted (ctx, update) {
     ctx.commit('recordSuccess', update.letter)
     ctx.dispatch('nextLetter')
     ctx.dispatch('resetLetter', update.letter)
-  } else {
-    if (ctx.state.history[update.letter].attempts >= RETRY_LIMIT) {
-      ctx.dispatch('nextLetter')
-      ctx.dispatch('resetLetter', update.letter)
-    }
+  } else if (ctx.state.history[update.letter].attempts >= RETRY_LIMIT) {
+    ctx.dispatch('nextLetter')
+    ctx.dispatch('resetLetter', update.letter)
   }
   if (ctx.state.history[update.letter].singleAttemptSuccesses >= STABLIZE_COUNT) {
     ctx.dispatch('stabilizeLetter', update.letter)
@@ -76,10 +73,19 @@ export function stabilizeLetter (ctx, letter) {
 }
 
 export function activateLetters (ctx) {
-  let countToAdd = Math.min(ACTIVATE_COUNT, ctx.state.pendingQueue.length)
-  for (let i = countToAdd - 1; i >= 0; i--) {
-    ctx.commit('activateLetter', ctx.state.pendingQueue[0])
+  let countToAdd = Math.min(REINTRODUCE_COUNT, ctx.state.stableQueue.length)
+  for (let i = 0; i < countToAdd; i++) {
+    const newLetter = ctx.state.stableQueue[0]
+    ctx.dispatch('fetchLetter', newLetter)
+    ctx.commit('reintroduceLetter', newLetter)
   }
+  for (let i = 0; i < ctx.state.pendingQueue[0].length; i++) {
+    const newLetter = ctx.state.pendingQueue[0][i]
+    for (let j = 0; j < newLetter.length; j++) {
+      ctx.dispatch('fetchLetter', newLetter[j])
+    }
+  }
+  ctx.commit('activateNextBunch')
 }
 
 export function lowActive (ctx, level) {

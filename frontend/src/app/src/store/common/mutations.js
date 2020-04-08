@@ -4,14 +4,6 @@ export function setPattern (state, pattern) {
   Vue.set(state.patterns, pattern.letter, pattern)
 }
 
-export function updateFeedback (state, feedback) {
-  state.feedback = feedback
-}
-
-export function updateInstructions (state, instructions) {
-  state.instructions = instructions
-}
-
 export function resetLetter (state, letter) {
   let letterHistory = state.history[letter] || {}
   letterHistory.previousAttempts = letterHistory.attempts || 0
@@ -55,18 +47,40 @@ export function stabilizeLetter (state, letter) {
   state.stableQueue.push(letter)
 }
 
-export function activateLetter (state, letter) {
-  var index = state.pendingQueue.indexOf(letter)
+export function activateNextBunch (state) {
+  let nextBunch = state.pendingQueue.shift()
+  while (nextBunch.length > 0) {
+    let letter = nextBunch.shift()
+    state.activeQueue.push(letter)
+  }
+}
+
+export function reintroduceLetter (state, letter) {
+  var index = state.stableQueue.indexOf(letter)
   if (index !== -1) {
-    state.pendingQueue.splice(index, 1)
+    state.stableQueue.splice(index, 1)
   }
   state.activeQueue.push(letter)
 }
 
-export function resetState (state) {
+export function resetState (state, level) {
   state.history = {}
   state.letter = ''
   state.activeQueue = []
   state.stableQueue = []
-  state.pendingQueue = ['b', 'c', 'd', 'f', 'g', 'h', 'l', 'r', 's', 't', 'a', 'e', 'i', 'o', 'u', 'v', 'm', 'n', 'p', 'j', 'k', 'q', 'w', 'x', 'y', 'z']
+  if (level === 'word') {
+    state.pendingQueue = [
+      ['Jim', 'is', 'awesome'],
+      ['His', 'app', 'skills', 'are', 'unreal']
+    ]
+  } else {
+    state.pendingQueue = [
+      ['b', 'c', 'd', 'f'],
+      ['g', 'h', 'l', 'r', 's', 't'],
+      ['a', 'e', 'i', 'o', 'u'],
+      ['v', 'm', 'n', 'p'],
+      ['j', 'k', 'w'],
+      ['q', 'w', 'x', 'y', 'z']
+    ]
+  }
 }
