@@ -35,6 +35,15 @@ export function uploadPattern (ctx, pattern) {
   }
 }
 
+export function promptForWatching (ctx) {
+  ctx.commit('updateInstructions', `Watch how we draw the letter "${ctx.state.letter}"`)
+}
+
+export function promptForDrawing (ctx) {
+  ctx.commit('updateInstructions', `Draw the letter "${ctx.state.letter}"`)
+  ctx.commit('updateFeedback', 'You may begin.')
+}
+
 export function practiceAttempted (ctx, update) {
   console.log(update)
   console.log(ctx.state.history)
@@ -42,12 +51,12 @@ export function practiceAttempted (ctx, update) {
   if (update.success) {
     ctx.commit('recordSuccess', update.letter)
     ctx.commit('updateFeedback', 'Good Job!')
-    ctx.commit('nextLetter')
+    ctx.dispatch('nextLetter')
     ctx.dispatch('resetLetter', update.letter)
   } else {
     ctx.commit('updateFeedback', 'Try again!')
     if (ctx.state.history[update.letter].attempts >= RETRY_LIMIT) {
-      ctx.commit('nextLetter')
+      ctx.dispatch('nextLetter')
       ctx.dispatch('resetLetter', update.letter)
     }
   }
@@ -57,6 +66,11 @@ export function practiceAttempted (ctx, update) {
   if (ctx.state.activeQueue.length < 5) {
     ctx.dispatch('activateLetter')
   }
+}
+
+export function nextLetter (ctx) {
+  ctx.commit('nextLetter')
+  ctx.commit('updateInstructions', `Draw the letter "${ctx.state.letter}"`)
 }
 
 export function resetLetter (ctx, letter) {

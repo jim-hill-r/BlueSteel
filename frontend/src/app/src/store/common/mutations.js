@@ -8,6 +8,10 @@ export function updateFeedback (state, feedback) {
   state.feedback = feedback
 }
 
+export function updateInstructions (state, instructions) {
+  state.instructions = instructions
+}
+
 export function resetLetter (state, letter) {
   let letterHistory = state.history[letter] || {}
   letterHistory.previousAttempts = letterHistory.attempts || 0

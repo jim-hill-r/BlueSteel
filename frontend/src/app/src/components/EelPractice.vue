@@ -9,7 +9,9 @@
           </q-card-section>
 
           <q-card-actions align="around">
-            <q-btn flat @click="start()">{{buttonLabel}}</q-btn>
+            <q-btn v-if="buttonLabel==='Start'" flat @click="start()">Start</q-btn>
+            <q-btn v-if="buttonLabel==='Done'" flat @click="done()">Done</q-btn>
+            <q-btn v-if="buttonLabel==='Go'" flat @click="go()">Go</q-btn>
           </q-card-actions>
         </q-card>
         <q-card class="my-card">
@@ -36,11 +38,8 @@ export default {
   },
   data () {
     return {
-      instructions: 'Welcome',
       isCanvasActive: false,
-      buttonLabel: 'Start',
-      loading: true,
-      success: true
+      buttonLabel: 'Start'
     }
   },
   created: function () {
@@ -52,6 +51,11 @@ export default {
         return this.$store.state.common.letter
       }
     },
+    instructions: {
+      get () {
+        return this.$store.state.common.instructions
+      }
+    },
     subtext: {
       get () {
         return this.$store.state.common.feedback
@@ -60,18 +64,25 @@ export default {
   },
   methods: {
     start () {
+      this.$store.dispatch('common/promptForWatching')
+      this.refresh()
+    },
+    done () {
       let update = {
         success: this.validateSuccess(),
         letter: this.letter,
         level: this.level
       }
       this.$store.dispatch('common/practiceAttempted', update)
-      this.$refs.whiteboard.clear()
-      this.instructions = `Draw the letter "${this.letter}"`
+      this.refresh()
+    },
+    refresh () {
       this.buttonLabel = 'Done'
+      this.$refs.whiteboard.clear()
       this.demonstrateLetter()
-      this.isCanvasActive = true
       this.$refs.whiteboard.record()
+      this.isCanvasActive = true
+      this.$store.dispatch('common/promptForDrawing')
     },
     validateSuccess () {
       let recording = this.$refs.whiteboard.getRecording().path

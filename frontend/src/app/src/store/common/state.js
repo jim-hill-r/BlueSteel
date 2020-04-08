@@ -3,6 +3,7 @@ export default {
   patterns: {},
   history: {},
   letter: 'a',
+  instructions: 'Welcome',
   feedback: 'Click start when you are ready to begin.',
   activeQueue: [
     'b',
