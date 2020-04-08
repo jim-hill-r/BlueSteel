@@ -53,6 +53,15 @@
             <q-item-label caption>Practice writing letters</q-item-label>
           </q-item-section>
         </q-item>
+        <q-item clickable to="word">
+          <q-item-section avatar>
+            <q-icon name="menu_book" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Word Practice</q-item-label>
+            <q-item-label caption>Practice combining letters to make words</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-item clickable to="training">
           <q-item-section avatar>
             <q-icon name="train" />

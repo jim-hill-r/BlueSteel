@@ -41,12 +41,13 @@ export function recordSuccess (state, letter) {
 
 export function nextLetter (state) {
   let next = state.activeQueue.shift()
-  state.activeQueue.push(state.letter)
+  if (state.letter != null && state.letter !== '') {
+    state.activeQueue.push(state.letter)
+  }
   state.letter = next
 }
 
 export function stabilizeLetter (state, letter) {
-  console.log(state)
   var index = state.activeQueue.indexOf(letter)
   if (index !== -1) {
     state.activeQueue.splice(index, 1)
@@ -54,6 +55,18 @@ export function stabilizeLetter (state, letter) {
   state.stableQueue.push(letter)
 }
 
-export function setWorkflow (state, workflow, level) {
-  Vue.set(state.workflows, level, workflow)
+export function activateLetter (state, letter) {
+  var index = state.pendingQueue.indexOf(letter)
+  if (index !== -1) {
+    state.pendingQueue.splice(index, 1)
+  }
+  state.activeQueue.push(letter)
+}
+
+export function resetState (state) {
+  state.history = {}
+  state.letter = ''
+  state.activeQueue = []
+  state.stableQueue = []
+  state.pendingQueue = ['b', 'c', 'd', 'f', 'g', 'h', 'l', 'r', 's', 't', 'a', 'e', 'i', 'o', 'u', 'v', 'm', 'n', 'p', 'j', 'k', 'q', 'w', 'x', 'y', 'z']
 }

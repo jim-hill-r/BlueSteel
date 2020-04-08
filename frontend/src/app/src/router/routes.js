@@ -7,6 +7,8 @@ const routes = [
       { path: 'tracing', component: () => import('pages/Tracing.vue') },
       { path: 'pattern', component: () => import('pages/Pattern.vue') },
       { path: 'freeform', component: () => import('pages/Freeform.vue') },
+      { path: 'word', component: () => import('pages/Word.vue') },
+      { path: 'congratulations', component: () => import('pages/Congratulations.vue') },
       { path: 'training', component: () => import('pages/Training.vue') }
     ]
   }

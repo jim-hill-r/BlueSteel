@@ -2,7 +2,8 @@ import * as path from '../../logic/path'
 import { axios } from 'boot/axios'
 
 const RETRY_LIMIT = 3
-const STABLIZE_COUNT = 1
+const STABLIZE_COUNT = 3
+const ACTIVATE_COUNT = 4
 
 export function fetchPatterns (ctx) {
   let letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
@@ -35,26 +36,18 @@ export function uploadPattern (ctx, pattern) {
   }
 }
 
-export function promptForWatching (ctx) {
-  ctx.commit('updateInstructions', `Watch how we draw the letter "${ctx.state.letter}"`)
-}
-
-export function promptForDrawing (ctx) {
-  ctx.commit('updateInstructions', `Draw the letter "${ctx.state.letter}"`)
-  ctx.commit('updateFeedback', 'You may begin.')
+export function startPractice (ctx) {
+  ctx.commit('resetState')
+  ctx.dispatch('nextLetter')
 }
 
 export function practiceAttempted (ctx, update) {
-  console.log(update)
-  console.log(ctx.state.history)
   ctx.commit('incrementAttempts', update.letter)
   if (update.success) {
     ctx.commit('recordSuccess', update.letter)
-    ctx.commit('updateFeedback', 'Good Job!')
     ctx.dispatch('nextLetter')
     ctx.dispatch('resetLetter', update.letter)
   } else {
-    ctx.commit('updateFeedback', 'Try again!')
     if (ctx.state.history[update.letter].attempts >= RETRY_LIMIT) {
       ctx.dispatch('nextLetter')
       ctx.dispatch('resetLetter', update.letter)
@@ -63,14 +56,15 @@ export function practiceAttempted (ctx, update) {
   if (ctx.state.history[update.letter].singleAttemptSuccesses >= STABLIZE_COUNT) {
     ctx.dispatch('stabilizeLetter', update.letter)
   }
-  if (ctx.state.activeQueue.length < 5) {
-    ctx.dispatch('activateLetter')
-  }
 }
 
 export function nextLetter (ctx) {
-  ctx.commit('nextLetter')
-  ctx.commit('updateInstructions', `Draw the letter "${ctx.state.letter}"`)
+  if (ctx.state.activeQueue.length < 2 && ctx.state.pendingQueue.length > 0) {
+    ctx.dispatch('activateLetters')
+    ctx.dispatch('nextLetter')
+  } else {
+    ctx.commit('nextLetter')
+  }
 }
 
 export function resetLetter (ctx, letter) {
@@ -81,8 +75,11 @@ export function stabilizeLetter (ctx, letter) {
   ctx.commit('stabilizeLetter', letter)
 }
 
-export function activateLetter (ctx, letter) {
-
+export function activateLetters (ctx) {
+  let countToAdd = Math.min(ACTIVATE_COUNT, ctx.state.pendingQueue.length)
+  for (let i = countToAdd - 1; i >= 0; i--) {
+    ctx.commit('activateLetter', ctx.state.pendingQueue[0])
+  }
 }
 
 export function lowActive (ctx, level) {
