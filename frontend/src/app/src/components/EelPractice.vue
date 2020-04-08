@@ -37,65 +37,49 @@ export default {
   data () {
     return {
       instructions: 'Welcome',
-      subtext: 'Click start when you are ready to begin.',
       isCanvasActive: false,
       buttonLabel: 'Start',
-      letter: 'a',
       loading: true,
-      success: true,
-      attempts: 0
+      success: true
     }
   },
   created: function () {
     this.$store.dispatch('common/fetchPatterns')
   },
+  computed: {
+    letter: {
+      get () {
+        return this.$store.state.common.letter
+      }
+    },
+    subtext: {
+      get () {
+        return this.$store.state.common.feedback
+      }
+    }
+  },
   methods: {
     start () {
-      this.success = this.validateSuccess()
-      this.subtext = this.getFeedback()
-      this.letter = this.getNextLetter()
+      let update = {
+        success: this.validateSuccess(),
+        letter: this.letter,
+        level: this.level
+      }
+      this.$store.dispatch('common/practiceAttempted', update)
       this.$refs.whiteboard.clear()
       this.instructions = `Draw the letter "${this.letter}"`
       this.buttonLabel = 'Done'
-      this.demonstrateLetter(this.currentLetter)
+      this.demonstrateLetter()
       this.isCanvasActive = true
       this.$refs.whiteboard.record()
-      setTimeout(() => {
-        this.subtext = `...`
-      }, 3000)
     },
     validateSuccess () {
       let recording = this.$refs.whiteboard.getRecording().path
       let currentPattern = this.$store.state.common.patterns[this.letter]
-      if (!currentPattern || !recording || recording.length < 1) {
-        this.loading = true
-        return true
-      }
-      this.loading = false
       if (compare(currentPattern.path, recording)) {
         return true
       }
       return false
-    },
-    getNextLetter () {
-      if (this.success || this.attempts > 2) {
-        this.attempts = 0
-        return String.fromCharCode(97 + Math.floor(Math.random() * 26))
-      }
-      this.attempts++
-      return this.letter
-    },
-    getFeedback () {
-      if (this.loading) {
-        return '...'
-      }
-      if (this.attempts > 2) {
-        return `We will come back! Let's try another`
-      }
-      if (this.success) {
-        return 'Great job!'
-      }
-      return 'Try again...'
     },
     demonstrateLetter () {
       if (this.$store.state.common.patterns[this.letter]) {

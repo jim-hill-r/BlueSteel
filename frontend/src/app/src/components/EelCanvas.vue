@@ -9,6 +9,11 @@ export default {
   props: {
     active: Boolean
   },
+  data () {
+    return {
+      recordedPoints: []
+    }
+  },
   mounted: function () {
     this.canvas = this.$refs.mainCanvas
     this.context = this.canvas.getContext('2d')
