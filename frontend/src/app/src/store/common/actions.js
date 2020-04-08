@@ -1,6 +1,10 @@
 import * as path from '../../logic/path'
 import { axios } from 'boot/axios'
 
+const RETRY_LIMIT = 3
+const STABLIZE_COUNT = 3
+const ACTIVATE_COUNT = 4
+
 export function fetchPatterns (ctx) {
   let letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
   letters.forEach(letter => {
@@ -30,4 +34,58 @@ export function uploadPattern (ctx, pattern) {
   if (pattern.quality === 'excellent') {
     axios.put(`https://eel3-data.s3.us-east-2.amazonaws.com/patterns/${pattern.letter}/${masterFilename}`, pattern, config)
   }
+}
+
+export function startPractice (ctx) {
+  ctx.commit('resetState')
+  ctx.dispatch('nextLetter')
+}
+
+export function practiceAttempted (ctx, update) {
+  ctx.commit('incrementAttempts', update.letter)
+  if (update.success) {
+    ctx.commit('recordSuccess', update.letter)
+    ctx.dispatch('nextLetter')
+    ctx.dispatch('resetLetter', update.letter)
+  } else {
+    if (ctx.state.history[update.letter].attempts >= RETRY_LIMIT) {
+      ctx.dispatch('nextLetter')
+      ctx.dispatch('resetLetter', update.letter)
+    }
+  }
+  if (ctx.state.history[update.letter].singleAttemptSuccesses >= STABLIZE_COUNT) {
+    ctx.dispatch('stabilizeLetter', update.letter)
+  }
+}
+
+export function nextLetter (ctx) {
+  if (ctx.state.activeQueue.length < 2 && ctx.state.pendingQueue.length > 0) {
+    ctx.dispatch('activateLetters')
+    ctx.dispatch('nextLetter')
+  } else {
+    ctx.commit('nextLetter')
+  }
+}
+
+export function resetLetter (ctx, letter) {
+  ctx.commit('resetLetter', letter)
+}
+
+export function stabilizeLetter (ctx, letter) {
+  ctx.commit('stabilizeLetter', letter)
+}
+
+export function activateLetters (ctx) {
+  let countToAdd = Math.min(ACTIVATE_COUNT, ctx.state.pendingQueue.length)
+  for (let i = countToAdd - 1; i >= 0; i--) {
+    ctx.commit('activateLetter', ctx.state.pendingQueue[0])
+  }
+}
+
+export function lowActive (ctx, level) {
+
+}
+
+export function staleFail (ctx, level) {
+
 }

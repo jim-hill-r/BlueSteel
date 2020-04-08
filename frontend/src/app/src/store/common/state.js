@@ -1,4 +1,9 @@
 export default {
   patternsLoading: true,
-  patterns: {}
+  patterns: {},
+  history: {},
+  letter: '',
+  activeQueue: [],
+  stableQueue: [],
+  pendingQueue: []
 }
