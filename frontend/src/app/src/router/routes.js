@@ -3,13 +3,13 @@ const routes = [
     path: '/',
     component: () => import('layouts/MyLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Index.vue') },
-      { path: 'tracing', component: () => import('pages/Tracing.vue') },
-      { path: 'pattern', component: () => import('pages/Pattern.vue') },
-      { path: 'freeform', component: () => import('pages/Freeform.vue') },
-      { path: 'word', component: () => import('pages/Word.vue') },
-      { path: 'congratulations', component: () => import('pages/Congratulations.vue') },
-      { path: 'training', component: () => import('pages/Training.vue') }
+      { name: 'home', path: '', component: () => import('pages/Index.vue') },
+      { name: 'tracing', path: 'tracing', component: () => import('pages/Tracing.vue') },
+      { name: 'pattern', path: 'pattern', component: () => import('pages/Pattern.vue') },
+      { name: 'freeform', path: 'freeform', component: () => import('pages/Freeform.vue') },
+      { name: 'word', path: 'word', component: () => import('pages/Word.vue') },
+      { name: 'congratulations', path: 'congratulations', component: () => import('pages/Congratulations.vue') },
+      { name: 'training', path: 'training', component: () => import('pages/Training.vue') }
     ]
   }
 ]

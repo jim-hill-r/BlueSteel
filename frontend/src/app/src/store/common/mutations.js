@@ -1,5 +1,13 @@
 import Vue from 'vue'
 
+export function setUser (state, user) {
+  state.user = user
+}
+
+export function setSequence (state, sequence) {
+  state.sequence = sequence
+}
+
 export function setPattern (state, pattern) {
   Vue.set(state.patterns, pattern.letter, pattern)
 }
@@ -69,18 +77,8 @@ export function resetState (state, level) {
   state.activeQueue = []
   state.stableQueue = []
   if (level === 'word') {
-    state.pendingQueue = [
-      ['Jim', 'is', 'awesome'],
-      ['His', 'app', 'skills', 'are', 'unreal']
-    ]
+    state.pendingQueue = Array.from(state.sequence.words, block => Array.from(block, word => word))
   } else {
-    state.pendingQueue = [
-      ['b', 'c', 'd', 'f'],
-      ['g', 'h', 'l', 'r', 's', 't'],
-      ['a', 'e', 'i', 'o', 'u'],
-      ['v', 'm', 'n', 'p'],
-      ['j', 'k', 'w'],
-      ['q', 'w', 'x', 'y', 'z']
-    ]
+    state.pendingQueue = Array.from(state.sequence.letters, block => Array.from(block, letter => letter))
   }
 }

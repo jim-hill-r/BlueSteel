@@ -5,5 +5,9 @@ export default {
   letter: '',
   activeQueue: [],
   stableQueue: [],
-  pendingQueue: []
+  pendingQueue: [],
+  sequence: {},
+  user: {
+    sequenceId: 'Guest'
+  }
 }

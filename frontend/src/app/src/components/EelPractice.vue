@@ -123,13 +123,13 @@ export default {
     },
     go () {
       if (this.level === 'tracing') {
-        this.$router.push('/pattern')
+        this.$router.push({ name: 'pattern', query: this.$router.currentRoute.query })
       } else if (this.level === 'pattern') {
-        this.$router.push('/freeform')
+        this.$router.push({ name: 'freeform', query: this.$router.currentRoute.query })
       } else if (this.level === 'freeform') {
-        this.$router.push('/word')
+        this.$router.push({ name: 'word', query: this.$router.currentRoute.query })
       } else {
-        this.$router.push('/congratulations')
+        this.$router.push({ name: 'congratulations', query: this.$router.currentRoute.query })
       }
     }
   }

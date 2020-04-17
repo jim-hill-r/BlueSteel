@@ -1,8 +1,8 @@
 import * as path from '../../logic/path'
 import { axios } from 'boot/axios'
 
-const RETRY_LIMIT = 3
-const STABLIZE_COUNT = 3
+const RETRY_LIMIT = 2
+const STABLIZE_COUNT = 1
 const REINTRODUCE_COUNT = 8
 
 export function fetchLetter (ctx, letter) {
@@ -33,6 +33,43 @@ export function uploadPattern (ctx, pattern) {
   if (pattern.quality === 'excellent') {
     axios.put(`https://eel3-data.s3.us-east-2.amazonaws.com/patterns/${pattern.letter}/${masterFilename}`, pattern, config)
   }
+}
+
+export function fetchSequence (ctx) {
+  let sequence = {
+    letters: [
+      ['b', 'c', 'd', 'f'],
+      ['g', 'h', 'l', 'r', 's', 't'],
+      ['a', 'e', 'i', 'o', 'u'],
+      ['v', 'm', 'n', 'p'],
+      ['j', 'k', 'w'],
+      ['q', 'w', 'x', 'y', 'z']
+    ],
+    words: [
+      ['feature', 'coming', 'soon']
+    ]
+  }
+  if (ctx.state.user != null && ctx.state.user.sequenceId != null && ctx.state.user.sequenceId === 'Tm9haCBH') {
+    sequence = {
+      letters: [
+        ['n', 't', 'm', 'f'],
+        ['i', 'a', 'c']
+      ],
+      words: [
+        ['in', 'it', 'if'],
+        ['an', 'at', 'am']
+      ]
+    }
+  }
+  ctx.commit('setSequence', sequence)
+}
+
+export function loginUser (ctx, sequenceId) {
+  let user = {
+    sequenceId: sequenceId
+  }
+  ctx.commit('setUser', user)
+  ctx.dispatch('fetchSequence')
 }
 
 export function startPractice (ctx, level) {

@@ -83,7 +83,11 @@
 <script>
 export default {
   name: 'MyLayout',
-
+  mounted: function () {
+    let sequenceId = this.$router.currentRoute.query.seq
+    console.log(sequenceId)
+    this.$store.dispatch('common/loginUser', sequenceId)
+  },
   data () {
     return {
       leftDrawerOpen: false
