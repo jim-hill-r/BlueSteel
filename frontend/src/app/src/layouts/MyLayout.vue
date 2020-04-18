@@ -1,25 +1,19 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          @click="leftDrawerOpen = !leftDrawerOpen"
-          icon="menu"
-          aria-label="Menu"
-        />
+    <q-layout view="lHh lpr lFf" class="shadow-2 rounded-borders">
+      <q-header elevated>
+        <q-toolbar>
+          <q-btn flat round dense icon="menu" class="q-mr-sm" @click="leftDrawerOpen = !leftDrawerOpen" />
 
-        <q-toolbar-title>
-          <router-link to="/" >
-            <span class="text-white" style="font-family: 'Chilanka', cursive;"> Blue Eel </span>
-          </router-link>
-        </q-toolbar-title>
-      </q-toolbar>
-    </q-header>
+          <q-toolbar-title>
+            <router-link to="/" >
+              <span class="text-white" style="font-family: 'Chilanka', cursive;"> Blue Eel </span>
+            </router-link>
+          </q-toolbar-title>
+          <q-btn flat round dense icon="settings" @click="rightDrawerOpen = !rightDrawerOpen"/>
+        </q-toolbar>
+      </q-header>
 
-    <q-drawer
+      <q-drawer
       v-model="leftDrawerOpen"
       show-if-above
       bordered
@@ -74,23 +68,56 @@
       </q-list>
     </q-drawer>
 
-    <q-page-container>
-      <router-view />
-    </q-page-container>
-  </q-layout>
+    <q-drawer
+      v-model="rightDrawerOpen"
+      side="right"
+      show-if-above
+      bordered
+      content-class="bg-grey-2"
+    >
+      <q-list>
+        <q-item>
+          <q-input v-model="sequenceId" label="Sequence" style="width: 100%" />
+        </q-item>
+      </q-list>
+    </q-drawer>
+      <q-footer elevated>
+        <q-toolbar>
+          <q-toolbar-title></q-toolbar-title>
+          &copy; 2020
+        </q-toolbar>
+      </q-footer>
+
+      <q-page-container>
+        <router-view />
+      </q-page-container>
+    </q-layout>
 </template>
 
 <script>
 export default {
   name: 'MyLayout',
   mounted: function () {
-    let sequenceId = this.$router.currentRoute.query.seq
-    console.log(sequenceId)
-    this.$store.dispatch('common/loginUser', sequenceId)
+    this.sequenceId = this.$router.currentRoute.query.seq || 'Standard'
+    this.saveSequence()
   },
   data () {
     return {
-      leftDrawerOpen: false
+      leftDrawerOpen: false,
+      rightDrawerOpen: false,
+      sequenceId: 'Standard'
+    }
+  },
+  methods: {
+    saveSequence () {
+      this.$store.dispatch('common/loginUser', this.sequenceId)
+    }
+  },
+  watch: {
+    rightDrawerOpen: function (updated, previous) {
+      if (updated === false) {
+        this.saveSequence()
+      }
     }
   }
 }
