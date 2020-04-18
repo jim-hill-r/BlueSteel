@@ -8,8 +8,7 @@ const routes = [
       { name: 'pattern', path: 'pattern', component: () => import('pages/Pattern.vue') },
       { name: 'freeform', path: 'freeform', component: () => import('pages/Freeform.vue') },
       { name: 'word', path: 'word', component: () => import('pages/Word.vue') },
-      { name: 'congratulations', path: 'congratulations', component: () => import('pages/Congratulations.vue') },
-      { name: 'training', path: 'training', component: () => import('pages/Training.vue') }
+      { name: 'congratulations', path: 'congratulations', component: () => import('pages/Congratulations.vue') }
     ]
   }
 ]

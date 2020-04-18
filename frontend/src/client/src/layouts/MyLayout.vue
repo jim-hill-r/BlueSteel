@@ -56,15 +56,6 @@
             <q-item-label caption>Practice combining letters to make words</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable to="training">
-          <q-item-section avatar>
-            <q-icon name="train" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Train the Eel</q-item-label>
-            <q-item-label caption>Write letters accurately to train the algorithm</q-item-label>
-          </q-item-section>
-        </q-item>
       </q-list>
     </q-drawer>
 

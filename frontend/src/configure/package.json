@@ -1,0 +1,41 @@
+{
+  "name": "blueeel",
+  "version": "0.0.1",
+  "description": "Learn to read",
+  "productName": "Blue Eel",
+  "cordovaId": "org.cordova.quasar.app",
+  "capacitorId": "",
+  "author": "Jim Hill <jim.hill.r@gmail.com>",
+  "private": true,
+  "scripts": {
+    "lint": "eslint --ext .js,.vue src",
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.0.0",
+    "apollo-cache-inmemory": "^1.6.3",
+    "apollo-client": "^2.6.4",
+    "apollo-link-http": "^1.5.16",
+    "axios": "^0.18.1",
+    "graphql": "^14.5.8",
+    "graphql-tag": "^2.10.1",
+    "node-fetch": "^2.6.0",
+    "quasar": "^1.0.0"
+  },
+  "devDependencies": {
+    "@quasar/app": "^1.0.0",
+    "@vue/eslint-config-standard": "^4.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.10.0",
+    "eslint-loader": "^2.1.1",
+    "eslint-plugin-vue": "^5.0.0"
+  },
+  "engines": {
+    "node": ">= 8.9.0",
+    "npm": ">= 5.6.0",
+    "yarn": ">= 1.6.0"
+  },
+  "browserslist": [
+    "last 1 version, not dead, ie >= 11"
+  ]
+}
