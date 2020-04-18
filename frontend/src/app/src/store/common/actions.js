@@ -1,10 +1,6 @@
 import * as path from '../../logic/path'
 import { axios } from 'boot/axios'
 
-const RETRY_LIMIT = 2
-const STABLIZE_COUNT = 1
-const REINTRODUCE_COUNT = 8
-
 export function fetchLetter (ctx, letter) {
   if (ctx.state.patterns[letter] == null) {
     axios.get(`https://eel3-data.s3.us-east-2.amazonaws.com/patterns/${letter}/master.json`)
@@ -61,6 +57,20 @@ export function fetchSequence (ctx) {
       ]
     }
   }
+  if (ctx.state.user != null && ctx.state.user.sequenceId != null && ctx.state.user.sequenceId === 'jim') {
+    sequence = {
+      letters: [
+        ['a', 'b'],
+        ['c', 'd']
+      ],
+      words: [
+        ['jim', 'rocks']
+      ]
+    }
+    ctx.commit('setRetryLimit', 1)
+    ctx.commit('setStabilizeCount', 1)
+    ctx.commit('setReintroduceCount', 1)
+  }
   ctx.commit('setSequence', sequence)
 }
 
@@ -78,16 +88,19 @@ export function startPractice (ctx, level) {
 }
 
 export function practiceAttempted (ctx, update) {
+  console.log(ctx.state.retryLimit)
+  console.log(ctx.state.stabilizeCount)
+  console.log(ctx.state.reintroduceCount)
   ctx.commit('incrementAttempts', update.letter)
   if (update.success) {
     ctx.commit('recordSuccess', update.letter)
     ctx.dispatch('nextLetter')
     ctx.dispatch('resetLetter', update.letter)
-  } else if (ctx.state.history[update.letter].attempts >= RETRY_LIMIT) {
+  } else if (ctx.state.history[update.letter].attempts >= ctx.state.retryLimit) {
     ctx.dispatch('nextLetter')
     ctx.dispatch('resetLetter', update.letter)
   }
-  if (ctx.state.history[update.letter].singleAttemptSuccesses >= STABLIZE_COUNT) {
+  if (ctx.state.history[update.letter].singleAttemptSuccesses >= ctx.state.stabilizeCount) {
     ctx.dispatch('stabilizeLetter', update.letter)
   }
 }
@@ -110,7 +123,7 @@ export function stabilizeLetter (ctx, letter) {
 }
 
 export function activateLetters (ctx) {
-  let countToAdd = Math.min(REINTRODUCE_COUNT, ctx.state.stableQueue.length)
+  let countToAdd = Math.min(ctx.state.reintroduceCount, ctx.state.stableQueue.length)
   for (let i = 0; i < countToAdd; i++) {
     const newLetter = ctx.state.stableQueue[0]
     ctx.dispatch('fetchLetter', newLetter)

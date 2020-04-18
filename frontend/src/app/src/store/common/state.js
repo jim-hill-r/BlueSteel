@@ -9,5 +9,8 @@ export default {
   sequence: {},
   user: {
     sequenceId: 'Guest'
-  }
+  },
+  retryLimit: 3,
+  stabilizeCount: 3,
+  reintroduceCount: 8
 }

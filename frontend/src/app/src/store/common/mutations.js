@@ -8,6 +8,18 @@ export function setSequence (state, sequence) {
   state.sequence = sequence
 }
 
+export function setRetryLimit (state, limit) {
+  state.retryLimit = limit
+}
+
+export function setStabilizeCount (state, count) {
+  state.stabilizeCount = count
+}
+
+export function setReintroduceCount (state, count) {
+  state.reintroduceCount = count
+}
+
 export function setPattern (state, pattern) {
   Vue.set(state.patterns, pattern.letter, pattern)
 }
