@@ -19,6 +19,24 @@
       content-class="bg-grey-2"
     >
       <q-list>
+        <q-item clickable to="sequence">
+          <q-item-section avatar>
+            <q-icon name="list" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Sequences</q-item-label>
+            <q-item-label caption>Define custom sequences for students</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable to="review">
+          <q-item-section avatar>
+            <q-icon name="spellcheck" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Review</q-item-label>
+            <q-item-label caption>Analyze students work</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-item clickable to="training">
           <q-item-section avatar>
             <q-icon name="train" />
