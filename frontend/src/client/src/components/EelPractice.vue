@@ -76,10 +76,16 @@ export default {
       }, 1000)
     },
     done () {
+      let recording = this.$refs.whiteboard.getRecording()
       let update = {
         success: this.validateSuccess(),
         letter: this.letter,
-        level: this.level
+        level: this.level,
+        pattern: {
+          letter: this.letter,
+          dimensions: recording.dimensions,
+          path: recording.path
+        }
       }
       if (update.success) {
         this.feedback = 'Great job!'

@@ -70,6 +70,16 @@
         <q-item>
           <q-input v-model="sequenceId" label="Sequence" style="width: 100%" />
         </q-item>
+        <q-item>
+          <q-input v-model="student" label="Student" style="width: 100%" />
+        </q-item>
+        <q-item>
+          <q-toggle
+            v-model="upload"
+            color="accent"
+            label="Upload Practice"
+          />
+        </q-item>
       </q-list>
     </q-drawer>
       <q-footer elevated>
@@ -96,12 +106,19 @@ export default {
     return {
       leftDrawerOpen: false,
       rightDrawerOpen: false,
-      sequenceId: 'Standard'
+      sequenceId: 'Standard',
+      student: '',
+      upload: false
     }
   },
   methods: {
     saveSequence () {
-      this.$store.dispatch('common/loginUser', this.sequenceId)
+      let user = {
+        name: this.student,
+        sequenceId: this.sequenceId,
+        uploading: this.upload
+      }
+      this.$store.dispatch('common/loginUser', user)
     }
   },
   watch: {
