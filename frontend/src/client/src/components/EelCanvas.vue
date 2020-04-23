@@ -1,5 +1,5 @@
 <template>
-  <canvas style="touch-action:none;" id="mainCanvas" ref="mainCanvas"></canvas>
+  <canvas style="touch-action:none;" touch-action="none" id="mainCanvas" ref="mainCanvas"></canvas>
 </template>
 
 <script>
@@ -65,10 +65,17 @@ export default {
       this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e), false)
       this.canvas.addEventListener('mouseup', (e) => this.handleMouseUp(e), false)
       this.canvas.addEventListener('mouseleave', (e) => this.handleMouseLeave(e), false)
-      this.canvas.addEventListener('pointerdown', (e) => this.handleMouseDown(e), false)
-      this.canvas.addEventListener('pointermove', (e) => this.handleMouseMove(e), false)
-      this.canvas.addEventListener('pointerup', (e) => this.handleMouseUp(e), false)
-      this.canvas.addEventListener('pointerleave', (e) => this.handleMouseLeave(e), false)
+      // this.canvas.addEventListener('pointerdown', (e) => this.handleMouseDown(e), false)
+      // this.canvas.addEventListener('pointermove', (e) => this.handleMouseMove(e), false)
+      // this.canvas.addEventListener('pointerup', (e) => this.handleMouseUp(e), false)
+      // this.canvas.addEventListener('pointerleave', (e) => this.handleMouseLeave(e), false)
+      this.canvas.addEventListener('touchstart', (e) => this.handleMouseDown(e), false)
+      this.canvas.addEventListener('touchmove', (e) => this.handleMouseMove(e), true)
+      this.canvas.addEventListener('touchend', (e) => this.handleMouseUp(e), false)
+      this.canvas.addEventListener('touchcancel', (e) => this.handleMouseLeave(e), false)
+    },
+    preventDefault (event) {
+      event.stopPropagation()
     },
     configureUserStroke () {
       this.context.strokeStyle = '#006064'
@@ -113,6 +120,7 @@ export default {
       this.context.setLineDash([])
     },
     handleMouseDown (event) {
+      event.preventDefault()
       if (this.isAnimating || !this.active) {
         return
       }
@@ -125,6 +133,7 @@ export default {
       }
     },
     handleMouseMove (event) {
+      event.preventDefault()
       if (this.drawing) {
         let point = { x: event.offsetX, y: event.offsetY }
         this.paint(this.prevPos, point)
@@ -135,6 +144,7 @@ export default {
       }
     },
     handleMouseUp (event) {
+      event.preventDefault()
       this.drawing = false
       let point = { x: event.offsetX, y: event.offsetY, type: 'end' }
       if (this.isRecording) {
@@ -142,6 +152,7 @@ export default {
       }
     },
     handleMouseLeave (event) {
+      event.preventDefault()
       this.drawing = false
     },
     paint (from, to) {
@@ -166,35 +177,45 @@ export default {
         return
       }
       this.isAnimating = true
-      this.animationSegment = 0
+      this.animationSegment = -5
       this.animationPoints = points
       this.animationPaintPath = includePath
+      let drawTime = 3000 // milliseconds
+      this.timePerPoint = drawTime / this.animationPoints.length
+      this.then = Date.now()
+      this.now = Date.now()
       this.animate()
     },
     animate () {
-      if (this.animationSegment < this.animationPoints.length - 2) {
+      if (this.isAnimating) {
         window.requestAnimationFrame(this.animate)
-      } else {
-        window.requestAnimationFrame(this.finishAnimation)
       }
-      let doPaint = this.animationPaintPath
-      if (this.animationPoints[this.animationSegment].type === 'start') {
-        this.configureStartStroke()
-        doPaint = true
-      } else if (this.animationPoints[this.animationSegment + 1].type === 'end') {
-        this.configureEndStroke()
-        doPaint = true
-      } else if (this.animationPoints[this.animationSegment].type === 'end') {
-        doPaint = false
-      } else {
-        this.configureEelStroke()
+      this.now = Date.now()
+      let elapsed = this.now - this.then
+      if (elapsed > this.timePerPoint) {
+        this.then = this.now
+        if (this.animationSegment > this.animationPoints.length + 5) {
+          this.finishAnimation()
+        } else if (this.animationPoints[this.animationSegment] == null) {
+          // Do nothing, wait for next frame
+        } else if (this.animationSegment > this.animationPoints.length + 5) {
+          this.finishAnimation()
+        } else if (this.animationPoints[this.animationSegment].type === 'start') {
+          this.configureStartStroke()
+          this.paint(this.animationPoints[this.animationSegment], this.animationPoints[this.animationSegment + 1])
+        } else if (this.animationPoints[this.animationSegment].type === 'end') {
+          this.configureEndStroke()
+          this.paint(this.animationPoints[this.animationSegment - 1], this.animationPoints[this.animationSegment])
+        } else if (this.animationPaintPath) {
+          this.configureEelStroke()
+          let endPoint = this.animationPoints[this.animationSegment + 1] || this.animationPoints[this.animationSegment]
+          this.paint(this.animationPoints[this.animationSegment], endPoint)
+        }
+        this.animationSegment++
       }
-      if (doPaint) {
-        this.paint(this.animationPoints[this.animationSegment], this.animationPoints[this.animationSegment + 1])
-      }
-      this.animationSegment++
     },
     finishAnimation () {
+      console.log('got here')
       this.configureUserStroke()
       this.isAnimating = false
       this.$emit('animationcomplete')

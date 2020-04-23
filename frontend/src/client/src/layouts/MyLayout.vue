@@ -84,12 +84,13 @@
     </q-drawer>
       <q-footer elevated>
         <q-toolbar>
+          {{$store.state.common.version}}
           <q-toolbar-title></q-toolbar-title>
           &copy; 2020
         </q-toolbar>
       </q-footer>
 
-      <q-page-container>
+      <q-page-container style="touch-action:none;" touch-action="none" >
         <router-view />
       </q-page-container>
     </q-layout>
