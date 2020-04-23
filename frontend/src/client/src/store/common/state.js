@@ -1,4 +1,5 @@
 export default {
+  version: '2040',
   patternsLoading: true,
   patterns: {},
   history: {},
