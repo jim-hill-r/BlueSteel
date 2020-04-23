@@ -20,7 +20,7 @@ def getMimeType(key):
             mimetype = 'application/text'
     return mimetype
 
-def uploadDirectory(path,bucket,s3Key, region):
+def uploadDirectoryToS3(path,bucket,s3Key, region):
     s3 = boto3.client('s3', region_name=region)
     pathLength = len(path) + 1
     for root,dirs,files in os.walk(path):
@@ -37,16 +37,6 @@ def uploadDirectory(path,bucket,s3Key, region):
                     "ContentType": mimetype
                 }
             )
-
-def deploy():
-    releaseDate = datetime.utcnow().date().isoformat()
-    releaseCount = 1
-    #TODO: Check if something was already released on this date. If so increment release count.
-    release = releaseDate + '-' + str(releaseCount)
-    print ('Deploying new release... ' + release)
-    uploadDirectory('../src/client/dist/pwa','eel3-app','client/' + release,'us-east-2')
-    uploadDirectory('../src/configure/dist/pwa','eel3-app','configure/' + release,'us-east-2')
-    print (release + ' successfully deployed.')
-
+            
 if __name__ == '__main__':
     deploy()
