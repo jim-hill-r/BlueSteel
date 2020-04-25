@@ -1,33 +1,14 @@
-import * as path from '../../logic/path'
 import { axios } from 'boot/axios'
 
+// //////////////////
+// FETCH FROM CLOUD
+// //////////////////
 export function fetchLetter (ctx, letter) {
   if (ctx.state.patterns[letter] == null) {
     axios.get(`https://eel3-data.s3.us-east-2.amazonaws.com/patterns/${letter}/master.json`)
       .then(res => {
         ctx.commit('setPattern', res.data)
       }).catch(err => err) // TODO: Properly catch error
-  }
-}
-
-export function uploadPattern (ctx, pattern) {
-  pattern.path = path.simplify(pattern.path)
-  pattern.quality = pattern.quality.toLowerCase()
-
-  let now = new Date()
-  let timestamp = now.toISOString()
-  let config = {
-    headers: {
-      'content-type': 'application/json',
-      'x-amz-acl': 'public-read'
-    }
-  }
-  let filename = `${timestamp}.json`
-  axios.put(`https://eel3-data.s3.us-east-2.amazonaws.com/patterns/${pattern.letter}/${filename}`, pattern, config)
-
-  let masterFilename = `master.json`
-  if (pattern.quality === 'excellent') {
-    axios.put(`https://eel3-data.s3.us-east-2.amazonaws.com/patterns/${pattern.letter}/${masterFilename}`, pattern, config)
   }
 }
 
@@ -74,10 +55,36 @@ export function fetchSequence (ctx) {
   ctx.commit('setSequence', sequence)
 }
 
-export function loginUser (ctx, sequenceId) {
-  let user = {
-    sequenceId: sequenceId
+// //////////////////
+// UPLOAD TO CLOUD
+// //////////////////
+export function uploadPractice (ctx, update) {
+  let sequenceId = ctx.state.user.sequenceId
+  if (sequenceId == null || sequenceId === '') {
+    sequenceId = 'Standard'
   }
+
+  let data = {
+    update: update,
+    user: ctx.state.user
+  }
+
+  let now = new Date()
+  let timestamp = now.toISOString()
+  let config = {
+    headers: {
+      'content-type': 'application/json',
+      'x-amz-acl': 'public-read'
+    }
+  }
+  let filename = `${timestamp}.json`
+  axios.put(`https://eel3-data.s3.us-east-2.amazonaws.com/practice/${sequenceId}/${filename}`, data, config)
+}
+
+// //////////////////
+// LOCAL ACTIONS
+// //////////////////
+export function loginUser (ctx, user) {
   ctx.commit('setUser', user)
   ctx.dispatch('fetchSequence')
 }
@@ -88,10 +95,10 @@ export function startPractice (ctx, level) {
 }
 
 export function practiceAttempted (ctx, update) {
-  console.log(ctx.state.retryLimit)
-  console.log(ctx.state.stabilizeCount)
-  console.log(ctx.state.reintroduceCount)
   ctx.commit('incrementAttempts', update.letter)
+  if (ctx.state.user.uploading) {
+    ctx.dispatch('uploadPractice', update)
+  }
   if (update.success) {
     ctx.commit('recordSuccess', update.letter)
     ctx.dispatch('nextLetter')

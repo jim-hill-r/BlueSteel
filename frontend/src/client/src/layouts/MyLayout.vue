@@ -57,6 +57,9 @@
           </q-item-section>
         </q-item>
       </q-list>
+      <div class="absolute-bottom">
+        <div class="text-right"> v{{$store.state.common.version}} &nbsp; &nbsp; &copy; 2020 </div>
+      </div>
     </q-drawer>
 
     <q-drawer
@@ -70,19 +73,22 @@
         <q-item>
           <q-input v-model="sequenceId" label="Sequence" style="width: 100%" />
         </q-item>
+        <q-item>
+          <q-input v-model="student" label="Student" style="width: 100%" />
+        </q-item>
+        <q-item>
+          <q-toggle
+            v-model="upload"
+            color="accent"
+            label="Upload Practice"
+          />
+        </q-item>
       </q-list>
     </q-drawer>
-      <q-footer elevated>
-        <q-toolbar>
-          <q-toolbar-title></q-toolbar-title>
-          &copy; 2020
-        </q-toolbar>
-      </q-footer>
-
-      <q-page-container>
-        <router-view />
-      </q-page-container>
-    </q-layout>
+    <q-page-container style="touch-action:none;" touch-action="none" >
+      <router-view />
+    </q-page-container>
+  </q-layout>
 </template>
 
 <script>
@@ -96,12 +102,19 @@ export default {
     return {
       leftDrawerOpen: false,
       rightDrawerOpen: false,
-      sequenceId: 'Standard'
+      sequenceId: 'Standard',
+      student: '',
+      upload: false
     }
   },
   methods: {
     saveSequence () {
-      this.$store.dispatch('common/loginUser', this.sequenceId)
+      let user = {
+        name: this.student,
+        sequenceId: this.sequenceId,
+        uploading: this.upload
+      }
+      this.$store.dispatch('common/loginUser', user)
     }
   },
   watch: {

@@ -1,4 +1,5 @@
 export default {
+  version: '1.0.1.0',
   patternsLoading: true,
   patterns: {},
   history: {},
@@ -8,7 +9,9 @@ export default {
   pendingQueue: [],
   sequence: {},
   user: {
-    sequenceId: 'Guest'
+    sequenceId: 'Standard',
+    uploading: false,
+    name: ''
   },
   retryLimit: 3,
   stabilizeCount: 3,
