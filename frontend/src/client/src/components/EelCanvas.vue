@@ -69,121 +69,135 @@ export default {
       // this.canvas.addEventListener('pointermove', (e) => this.handleMouseMove(e), false)
       // this.canvas.addEventListener('pointerup', (e) => this.handleMouseUp(e), false)
       // this.canvas.addEventListener('pointerleave', (e) => this.handleMouseLeave(e), false)
-      this.canvas.addEventListener('touchstart', (e) => this.handleMouseDown(e), false)
-      this.canvas.addEventListener('touchmove', (e) => this.handleMouseMove(e), true)
-      this.canvas.addEventListener('touchend', (e) => this.handleMouseUp(e), false)
-      this.canvas.addEventListener('touchcancel', (e) => this.handleMouseLeave(e), false)
+      this.canvas.addEventListener('touchstart', (e) => this.handleTouchDown(e), false)
+      this.canvas.addEventListener('touchmove', (e) => this.handleTouchMove(e), true)
+      this.canvas.addEventListener('touchend', (e) => this.handleTouchUp(e), false)
+      this.canvas.addEventListener('touchcancel', (e) => this.handleTouchLeave(e), false)
     },
-    preventDefault (event) {
-      event.stopPropagation()
+    getMousePoint (event) {
+      let boundingRect = this.canvas.getBoundingClientRect()
+      return { x: event.clientX - boundingRect.left, y: event.clientY - boundingRect.top }
     },
-    configureUserStroke () {
-      this.context.strokeStyle = '#006064'
-      this.context.lineWidth = 15
-      this.context.lineCap = 'round'
-      this.context.setLineDash([])
-    },
-    configureEelStroke () {
-      this.context.strokeStyle = '#FFD54F'
-      this.context.lineWidth = 8
-      this.context.lineCap = 'round'
-      this.context.setLineDash([])
-    },
-    configureStartStroke () {
-      this.context.strokeStyle = 'green'
-      this.context.lineWidth = 25
-      this.context.lineCap = 'round'
-      this.context.setLineDash([])
-    },
-    configureEndStroke () {
-      this.context.strokeStyle = 'red'
-      this.context.lineWidth = 25
-      this.context.lineCap = 'round'
-      this.context.setLineDash([])
-    },
-    configureGuidesStroke () {
-      this.context.strokeStyle = '#3D4849'
-      this.context.lineWidth = 6
-      this.context.lineCap = 'round'
-      this.context.setLineDash([])
-    },
-    configureMiddleGuideStroke () {
-      this.context.strokeStyle = '#3D4849'
-      this.context.lineWidth = 3
-      this.context.lineCap = 'round'
-      this.context.setLineDash([this.canvas.width * 0.04, this.canvas.width * 0.02875])
-    },
-    configureLowestGuideStroke () {
-      this.context.strokeStyle = '#667b7d'
-      this.context.lineWidth = 4
-      this.context.lineCap = 'round'
-      this.context.setLineDash([])
+    getTouchPoint (event) {
+      let boundingRect = this.canvas.getBoundingClientRect()
+      return { x: event.targetTouches[0].clientX - boundingRect.left, y: event.targetTouches[0].clientY - boundingRect.top }
     },
     handleMouseDown (event) {
+      if (!this.isAnimating && this.active) {
+        this.startDraw(this.getMousePoint(event))
+      }
+    },
+    handleTouchDown (event) {
       event.preventDefault()
-      if (this.isAnimating || !this.active) {
-        return
+      if (!this.isAnimating && this.active) {
+        this.startDraw(this.getTouchPoint(event))
       }
+    },
+    startDraw (point) {
+      this.setStrokeStyle('USER')
       this.drawing = true
-      let point = { x: event.offsetX, y: event.offsetY, type: 'start' }
-      this.paint(point, point)
-      this.prevPos = point
-      if (this.isRecording) {
-        this.recordedPoints.push(point)
-      }
+      point.type = 'start'
+      this.prevPoint = point
+      this.segmentDraw(point)
     },
     handleMouseMove (event) {
-      event.preventDefault()
       if (this.drawing) {
-        let point = { x: event.offsetX, y: event.offsetY }
-        this.paint(this.prevPos, point)
-        this.prevPos = { x: event.offsetX, y: event.offsetY }
-        if (this.isRecording) {
-          this.recordedPoints.push(point)
-        }
+        this.segmentDraw(this.getMousePoint(event))
       }
     },
-    handleMouseUp (event) {
-      event.preventDefault()
-      this.drawing = false
-      let point = { x: event.offsetX, y: event.offsetY, type: 'end' }
+    handleTouchMove (event) {
+      if (this.drawing) {
+        this.segmentDraw(this.getTouchPoint(event))
+      }
+    },
+    segmentDraw (point) {
+      this.paintLine(this.prevPoint, point)
       if (this.isRecording) {
         this.recordedPoints.push(point)
       }
+      this.prevPoint = point
     },
-    handleMouseLeave (event) {
-      event.preventDefault()
+    handleMouseUp (event) {
+      this.endDraw(this.prevPoint)
+    },
+    handleTouchUp (event) {
+      this.endDraw(this.prevPoint)
+    },
+    endDraw (point) {
+      point.type = 'end'
+      this.segmentDraw(point)
       this.drawing = false
     },
-    paint (from, to) {
+    handleMouseLeave (event) {
+      this.drawing = false
+    },
+    handleTouchLeave (event) {
+      this.drawing = false
+    },
+    setStrokeStyle (style) {
+      this.context.lineCap = 'round'
+      this.context.setLineDash([])
+      if (style === 'START_CIRCLE') {
+        this.context.strokeStyle = '#003300'
+        this.context.fillStyle = 'green'
+        this.context.lineWidth = 2
+      } else if (style === 'END_CIRCLE') {
+        this.context.strokeStyle = '#900000'
+        this.context.fillStyle = 'red'
+        this.context.lineWidth = 2
+      } else if (style === 'USER') {
+        this.context.strokeStyle = '#006064'
+        this.context.lineWidth = 15
+      } else if (style === 'EEL') {
+        this.context.strokeStyle = '#FFD54F'
+        this.context.lineWidth = 8
+      } else if (style === 'PRIMARY_GUIDE') {
+        this.context.strokeStyle = '#3D4849'
+        this.context.lineWidth = 6
+      } else if (style === 'DOTTED_GUIDE') {
+        this.context.strokeStyle = '#3D4849'
+        this.context.lineWidth = 3
+        this.context.setLineDash([this.canvas.width * 0.04, this.canvas.width * 0.02875])
+      } else if (style === 'MINIMAL_GUIDE') {
+        this.context.strokeStyle = '#667b7d'
+        this.context.lineWidth = 4
+      }
+    },
+    paintLine (from, to) {
       this.context.beginPath()
       this.context.moveTo(from.x, from.y)
       this.context.lineTo(to.x, to.y)
       this.context.stroke()
     },
+    paintCircle (center, radius) {
+      this.context.beginPath()
+      this.context.arc(center.x, center.y, radius, 0, 2 * Math.PI, false)
+      this.context.fill()
+      this.context.stroke()
+    },
     clear () {
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
-      this.configureGuidesStroke()
-      this.paint({ x: 0, y: this.lowerLineY }, { x: this.canvas.width, y: this.lowerLineY })
-      this.paint({ x: 0, y: this.upperLineY }, { x: this.canvas.width, y: this.upperLineY })
-      this.configureLowestGuideStroke()
-      this.paint({ x: 0, y: this.lowestLineY }, { x: this.canvas.width, y: this.lowestLineY })
-      this.configureMiddleGuideStroke()
-      this.paint({ x: 0, y: this.middleLineY }, { x: this.canvas.width, y: this.middleLineY })
-      this.configureUserStroke()
+      this.setStrokeStyle('PRIMARY_GUIDE')
+      this.paintLine({ x: 0, y: this.lowerLineY }, { x: this.canvas.width, y: this.lowerLineY })
+      this.paintLine({ x: 0, y: this.upperLineY }, { x: this.canvas.width, y: this.upperLineY })
+      this.setStrokeStyle('MINIMAL_GUIDE')
+      this.paintLine({ x: 0, y: this.lowestLineY }, { x: this.canvas.width, y: this.lowestLineY })
+      this.setStrokeStyle('DOTTED_GUIDE')
+      this.paintLine({ x: 0, y: this.middleLineY }, { x: this.canvas.width, y: this.middleLineY })
+      this.setStrokeStyle('USER')
     },
     draw (points, includePath) {
       if (!points || points.length < 0) {
         return
       }
-      this.isAnimating = true
-      this.animationSegment = -5
+      this.animationSegment = 0
       this.animationPoints = points
       this.animationPaintPath = includePath
       let drawTime = 3000 // milliseconds
       this.timePerPoint = drawTime / this.animationPoints.length
       this.then = Date.now()
       this.now = Date.now()
+      this.isAnimating = true
       this.animate()
     },
     animate () {
@@ -194,31 +208,23 @@ export default {
       let elapsed = this.now - this.then
       if (elapsed > this.timePerPoint) {
         this.then = this.now
-        if (this.animationSegment > this.animationPoints.length + 5) {
-          this.finishAnimation()
-        } else if (this.animationPoints[this.animationSegment] == null) {
-          // Do nothing, wait for next frame
-        } else if (this.animationSegment > this.animationPoints.length + 5) {
-          this.finishAnimation()
+        if (this.animationSegment >= this.animationPoints.length) {
+          this.setStrokeStyle('USER')
+          this.isAnimating = false
+          this.$emit('animationcomplete')
         } else if (this.animationPoints[this.animationSegment].type === 'start') {
-          this.configureStartStroke()
-          this.paint(this.animationPoints[this.animationSegment], this.animationPoints[this.animationSegment + 1])
+          this.setStrokeStyle('START_CIRCLE')
+          this.paintCircle(this.animationPoints[this.animationSegment], 13)
         } else if (this.animationPoints[this.animationSegment].type === 'end') {
-          this.configureEndStroke()
-          this.paint(this.animationPoints[this.animationSegment - 1], this.animationPoints[this.animationSegment])
+          this.setStrokeStyle('END_CIRCLE')
+          this.paintCircle(this.animationPoints[this.animationSegment], 13)
         } else if (this.animationPaintPath) {
-          this.configureEelStroke()
+          this.setStrokeStyle('EEL')
           let endPoint = this.animationPoints[this.animationSegment + 1] || this.animationPoints[this.animationSegment]
-          this.paint(this.animationPoints[this.animationSegment], endPoint)
+          this.paintLine(this.animationPoints[this.animationSegment], endPoint)
         }
         this.animationSegment++
       }
-    },
-    finishAnimation () {
-      console.log('got here')
-      this.configureUserStroke()
-      this.isAnimating = false
-      this.$emit('animationcomplete')
     }
   }
 }

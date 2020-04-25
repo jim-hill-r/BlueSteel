@@ -1,5 +1,5 @@
 export default {
-  version: '2137',
+  version: '1.0.1.0',
   patternsLoading: true,
   patterns: {},
   history: {},

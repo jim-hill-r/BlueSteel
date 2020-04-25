@@ -57,6 +57,9 @@
           </q-item-section>
         </q-item>
       </q-list>
+      <div class="absolute-bottom">
+        <div class="text-right"> v{{$store.state.common.version}} &nbsp; &nbsp; &copy; 2020 </div>
+      </div>
     </q-drawer>
 
     <q-drawer
@@ -82,18 +85,10 @@
         </q-item>
       </q-list>
     </q-drawer>
-      <q-footer elevated>
-        <q-toolbar>
-          {{$store.state.common.version}}
-          <q-toolbar-title></q-toolbar-title>
-          &copy; 2020
-        </q-toolbar>
-      </q-footer>
-
-      <q-page-container style="touch-action:none;" touch-action="none" >
-        <router-view />
-      </q-page-container>
-    </q-layout>
+    <q-page-container style="touch-action:none;" touch-action="none" >
+      <router-view />
+    </q-page-container>
+  </q-layout>
 </template>
 
 <script>

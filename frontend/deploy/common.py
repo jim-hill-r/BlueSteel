@@ -37,6 +37,3 @@ def uploadDirectoryToS3(path,bucket,s3Key, region):
                     "ContentType": mimetype
                 }
             )
-            
-if __name__ == '__main__':
-    deploy()
