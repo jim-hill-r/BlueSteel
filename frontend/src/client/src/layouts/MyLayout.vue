@@ -2,14 +2,14 @@
     <q-layout view="lHh lpr lFf" class="shadow-2 rounded-borders">
       <q-header elevated>
         <q-toolbar>
-          <q-btn flat round dense icon="menu" class="q-mr-sm" @click="leftDrawerOpen = !leftDrawerOpen" />
+          <q-btn flat round dense icon="fas fa-bars" label="" class="q-mr-sm" @click="leftDrawerOpen = !leftDrawerOpen" />
 
           <q-toolbar-title>
             <router-link to="/" >
-              <span class="text-white" style="font-family: 'Chilanka', cursive;"> Blue Eel </span>
+              <span class="text-white"> Blue Eel </span>
             </router-link>
           </q-toolbar-title>
-          <q-btn flat round dense icon="settings" @click="rightDrawerOpen = !rightDrawerOpen"/>
+          <q-btn flat round dense icon="fas fa-ellipsis-v" @click="rightDrawerOpen = !rightDrawerOpen"/>
         </q-toolbar>
       </q-header>
 
@@ -22,7 +22,7 @@
       <q-list>
         <q-item clickable to="tracing">
           <q-item-section avatar>
-            <q-icon name="fingerprint" />
+            <q-icon name="fas fa-bacon" />
           </q-item-section>
           <q-item-section>
             <q-item-label>Tracing Practice</q-item-label>
@@ -31,7 +31,7 @@
         </q-item>
         <q-item clickable to="pattern">
           <q-item-section avatar>
-            <q-icon name="scatter_plot" />
+            <q-icon name="fas fa-draw-polygon" />
           </q-item-section>
           <q-item-section>
             <q-item-label>Pattern Practice</q-item-label>
@@ -40,7 +40,7 @@
         </q-item>
         <q-item clickable to="freeform">
           <q-item-section avatar>
-            <q-icon name="gesture" />
+            <q-icon name="fas fa-wave-square" />
           </q-item-section>
           <q-item-section>
             <q-item-label>Freeform Practice</q-item-label>
@@ -49,7 +49,7 @@
         </q-item>
         <q-item clickable to="word">
           <q-item-section avatar>
-            <q-icon name="menu_book" />
+            <q-icon name="fas fa-book-open" />
           </q-item-section>
           <q-item-section>
             <q-item-label>Word Practice</q-item-label>
