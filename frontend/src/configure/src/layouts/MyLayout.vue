@@ -2,11 +2,11 @@
     <q-layout view="lHh lpr lFf" class="shadow-2 rounded-borders">
       <q-header elevated>
         <q-toolbar>
-          <q-btn flat round dense icon="menu" class="q-mr-sm" @click="leftDrawerOpen = !leftDrawerOpen" />
+          <q-btn flat round dense icon="fas fa-bars" class="q-mr-sm" @click="leftDrawerOpen = !leftDrawerOpen" />
 
           <q-toolbar-title>
             <router-link to="/" >
-              <span class="text-white" style="font-family: 'Chilanka', cursive;"> Blue Eel Configurator </span>
+              <span class="text-white"> Blue Eel Configurator </span>
             </router-link>
           </q-toolbar-title>
         </q-toolbar>
@@ -21,7 +21,7 @@
       <q-list>
         <q-item clickable to="sequence">
           <q-item-section avatar>
-            <q-icon name="list" />
+            <q-icon name="fas fa-clipboard-list" />
           </q-item-section>
           <q-item-section>
             <q-item-label>Sequences</q-item-label>
@@ -30,7 +30,7 @@
         </q-item>
         <q-item clickable to="review">
           <q-item-section avatar>
-            <q-icon name="spellcheck" />
+            <q-icon name="fas fa-spell-check" />
           </q-item-section>
           <q-item-section>
             <q-item-label>Review</q-item-label>
@@ -39,7 +39,7 @@
         </q-item>
         <q-item clickable to="training">
           <q-item-section avatar>
-            <q-icon name="train" />
+            <q-icon name="fas fa-magic" />
           </q-item-section>
           <q-item-section>
             <q-item-label>Train the Eel</q-item-label>
@@ -47,14 +47,10 @@
           </q-item-section>
         </q-item>
       </q-list>
+      <div class="absolute-bottom">
+        <div class="text-right"> &nbsp; &nbsp; &copy; 2020 </div>
+      </div>
     </q-drawer>
-
-    <q-footer elevated>
-      <q-toolbar>
-        <q-toolbar-title></q-toolbar-title>
-        &copy; 2020
-      </q-toolbar>
-    </q-footer>
 
     <q-page-container>
       <router-view />
@@ -78,7 +74,6 @@ export default {
   },
   methods: {
     saveSequence () {
-      this.$store.dispatch('common/loginUser', this.sequenceId)
     }
   },
   watch: {
