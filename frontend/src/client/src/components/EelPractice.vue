@@ -6,10 +6,7 @@
           <q-card-section class="bg-accent text-white">
             <div class="text-h6">
               <span v-if="atStart"> Welcome! </span>
-              <span v-if="!atStart && letter != null"> Draw the
-                <span v-if="level === 'word'"> word </span>
-                <span v-if="level !== 'word'"> letter </span>
-              "{{letter}}" </span>
+              <span v-if="!atStart && letter != null"> Draw: <b>{{letter}}</b> </span>
               <span v-if="!atStart && letter == null"> You are ready for the next level! </span>
             </div>
             <div class="text-subtitle2">
@@ -20,9 +17,9 @@
           </q-card-section>
 
           <q-card-actions align="around">
-            <q-btn v-if="atStart" flat @click="start()">Start</q-btn>
-            <q-btn v-if="!atStart && letter != null" flat @click="done()">Done</q-btn>
-            <q-btn v-if="!atStart && letter == null" flat @click="go()">Go</q-btn>
+            <q-btn v-if="atStart" @click="start()" no-caps style="width:100%" color="accent">Start</q-btn>
+            <q-btn v-if="!atStart && letter != null" @click="done()" no-caps icon="fas fa-check" style="width:100%" color="positive"></q-btn>
+            <q-btn v-if="!atStart && letter == null" @click="go()" no-caps style="width:100%" color="accent">Go</q-btn>
           </q-card-actions>
         </q-card>
         <q-card class="my-card">
