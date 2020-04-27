@@ -1,5 +1,5 @@
 export default {
-  version: '1.0.2.0',
+  version: '1.1.0.1',
   patternsLoading: true,
   patterns: {},
   history: {},
@@ -10,7 +10,7 @@ export default {
   sequence: {},
   user: {
     sequenceId: 'Standard',
-    uploading: false,
+    uploading: true,
     name: ''
   },
   retryLimit: 3,
