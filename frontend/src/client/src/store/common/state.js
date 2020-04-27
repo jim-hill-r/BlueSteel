@@ -10,7 +10,7 @@ export default {
   sequence: {},
   user: {
     sequenceId: 'Standard',
-    uploading: false,
+    uploading: true,
     name: ''
   },
   retryLimit: 3,

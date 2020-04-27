@@ -104,7 +104,7 @@ export default {
       rightDrawerOpen: false,
       sequenceId: 'Standard',
       student: '',
-      upload: false
+      upload: true
     }
   },
   methods: {
