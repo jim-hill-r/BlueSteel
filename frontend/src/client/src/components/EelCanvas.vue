@@ -189,9 +189,15 @@ export default {
       }
       this.animationSegment = 0
       this.animationPoints = points
-      this.animationPaintPath = includePath
+
       let drawTime = 3000 // milliseconds
       this.timePerPoint = drawTime / this.animationPoints.length
+
+      if (includePath === false) {
+        this.animationPoints = points.filter(point => point.type === 'start' || point.type === 'end')
+        this.timePerPoint = 400 // milliseconds
+      }
+
       this.then = Date.now()
       this.now = Date.now()
       this.isAnimating = true
@@ -215,7 +221,7 @@ export default {
         } else if (this.animationPoints[this.animationSegment].type === 'end') {
           this.setStrokeStyle('END_CIRCLE')
           this.paintCircle(this.animationPoints[this.animationSegment], 13)
-        } else if (this.animationPaintPath) {
+        } else {
           this.setStrokeStyle('EEL')
           let endPoint = this.animationPoints[this.animationSegment + 1] || this.animationPoints[this.animationSegment]
           this.paintLine(this.animationPoints[this.animationSegment], endPoint)
