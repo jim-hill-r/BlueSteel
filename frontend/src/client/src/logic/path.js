@@ -9,7 +9,7 @@ export function size (path) {
     return { x: Math.max(max.x, p.x), y: Math.max(max.y, p.y) }
   })
 
-  return Math.max([maxs.x - mins.x, maxs.y - mins.y])
+  return Math.max(maxs.x - mins.x, maxs.y - mins.y)
 }
 
 export function simplify (originalPath, desiredPoints) {
