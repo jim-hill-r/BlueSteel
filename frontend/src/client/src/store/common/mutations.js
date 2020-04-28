@@ -88,6 +88,7 @@ export function resetState (state, level) {
   state.letter = ''
   state.activeQueue = []
   state.stableQueue = []
+  state.level = level
   if (level === 'word') {
     state.pendingQueue = Array.from(state.sequence.words, block => Array.from(block, word => word))
   } else {
