@@ -41,8 +41,8 @@ export function fetchSequence (ctx) {
   if (ctx.state.user != null && ctx.state.user.sequenceId != null && ctx.state.user.sequenceId === 'jim') {
     sequence = {
       letters: [
-        ['a', 'b'],
-        ['c', 'd']
+        ['j', 'i', 'm'],
+        ['f']
       ],
       words: [
         ['jim', 'rocks']
@@ -53,6 +53,7 @@ export function fetchSequence (ctx) {
     ctx.commit('setReintroduceCount', 1)
   }
   ctx.commit('setSequence', sequence)
+  ctx.commit('resetState', ctx.state.level)
 }
 
 // //////////////////

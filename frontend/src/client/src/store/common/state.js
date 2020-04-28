@@ -1,5 +1,5 @@
 export default {
-  version: '1.1.0.1',
+  version: '1.1.0.2',
   patternsLoading: true,
   patterns: {},
   history: {},
@@ -7,6 +7,7 @@ export default {
   activeQueue: [],
   stableQueue: [],
   pendingQueue: [],
+  level: '',
   sequence: {},
   user: {
     sequenceId: '',
