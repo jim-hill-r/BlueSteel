@@ -67,10 +67,7 @@ export default {
     start () {
       this.atStart = false
       this.$store.dispatch('common/startPractice', this.level)
-      setTimeout(() => {
-        // TODO: Need to wait to fetch first letter... fix this
-        this.refresh()
-      }, 1000)
+      this.refresh()
     },
     done () {
       let recording = this.$refs.whiteboard.getRecording()
