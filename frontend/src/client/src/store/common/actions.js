@@ -52,6 +52,21 @@ export function fetchSequence (ctx) {
     ctx.commit('setStabilizeCount', 1)
     ctx.commit('setReintroduceCount', 1)
   }
+  for (let i = 0; i < sequence.letters.length; i++) {
+    let bunch = sequence.letters[i]
+    for (let j = 0; j < bunch.length; j++) {
+      ctx.dispatch('fetchLetter', bunch[j])
+    }
+  }
+  for (let i = 0; i < sequence.words.length; i++) {
+    let bunch = sequence.words[i]
+    for (let j = 0; j < bunch.length; j++) {
+      let word = bunch[j]
+      for (let z = 0; z < word.length; z++) {
+        ctx.dispatch('fetchLetter', word[j])
+      }
+    }
+  }
   ctx.commit('setSequence', sequence)
   ctx.commit('resetState', ctx.state.level)
 }
@@ -114,12 +129,10 @@ export function practiceAttempted (ctx, update) {
 }
 
 export function nextLetter (ctx) {
-  if (ctx.state.activeQueue.length < 2 && ctx.state.pendingQueue.length > 0) {
+  if (ctx.state.activeQueue.length < 1) {
     ctx.dispatch('activateLetters')
-    ctx.dispatch('nextLetter')
-  } else {
-    ctx.commit('nextLetter')
   }
+  ctx.commit('nextLetter')
 }
 
 export function resetLetter (ctx, letter) {
@@ -131,19 +144,21 @@ export function stabilizeLetter (ctx, letter) {
 }
 
 export function activateLetters (ctx) {
-  let countToAdd = Math.min(ctx.state.reintroduceCount, ctx.state.stableQueue.length)
-  for (let i = 0; i < countToAdd; i++) {
+  let countToReintroduce = 0
+
+  if (ctx.state.pendingQueue.length > 0) {
+    ctx.state.isFinalReview = false
+    ctx.commit('activateNextBunch')
+    countToReintroduce = Math.min(ctx.state.reintroduceCount, ctx.state.stableQueue.length)
+  } else if (!ctx.state.isFinalReview) {
+    ctx.state.isFinalReview = true
+    countToReintroduce = ctx.state.stableQueue.length
+  }
+
+  for (let i = 0; i < countToReintroduce; i++) {
     const newLetter = ctx.state.stableQueue[0]
-    ctx.dispatch('fetchLetter', newLetter)
     ctx.commit('reintroduceLetter', newLetter)
   }
-  for (let i = 0; i < ctx.state.pendingQueue[0].length; i++) {
-    const newLetter = ctx.state.pendingQueue[0][i]
-    for (let j = 0; j < newLetter.length; j++) {
-      ctx.dispatch('fetchLetter', newLetter[j])
-    }
-  }
-  ctx.commit('activateNextBunch')
 }
 
 export function lowActive (ctx, level) {

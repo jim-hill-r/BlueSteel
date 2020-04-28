@@ -47,6 +47,10 @@ export function recordSuccess (state, letter) {
   if (letterHistory.attempts === 1) {
     letterHistory.singleAttemptSuccesses = letterHistory.singleAttemptSuccesses + 1 || 1
     letterHistory.totalSingleAttemptSuccesses = letterHistory.totalSingleAttemptSuccesses + 1 || 1
+    if (letterHistory.totalAttempts === 1) { // Bonus for getting it right on your very first try
+      letterHistory.singleAttemptSuccesses = letterHistory.singleAttemptSuccesses + 1
+      letterHistory.totalSingleAttemptSuccesses = letterHistory.totalSingleAttemptSuccesses + 1
+    }
   }
   Vue.set(state.history, letter, letterHistory)
 }
