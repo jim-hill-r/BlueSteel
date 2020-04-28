@@ -9,7 +9,8 @@
               <span class="text-white"> Blue Eel </span>
             </router-link>
           </q-toolbar-title>
-          <q-btn flat round dense icon="fas fa-ellipsis-v" @click="rightDrawerOpen = !rightDrawerOpen"/>
+
+          <q-btn flat round dense icon="fas fa-ellipsis-v" label="" @click="rightDrawerOpen = !rightDrawerOpen"/>
         </q-toolbar>
       </q-header>
 
@@ -17,7 +18,8 @@
       v-model="leftDrawerOpen"
       show-if-above
       bordered
-      content-class="bg-grey-2"
+      elevated
+      :content-style="{ backgroundColor: '#f9f7f0' }"
     >
       <q-list>
         <q-item clickable to="tracing">
@@ -58,16 +60,25 @@
         </q-item>
       </q-list>
       <div class="absolute-bottom">
-        <div class="text-right"> v{{$store.state.common.version}} &nbsp; &nbsp; &copy; 2020 </div>
+        <q-list>
+          <q-item>
+            <div style="width:100%"> v{{$store.state.common.version}} </div>
+            <div class="text-right" style="width:100%"> &copy; 2020 </div>
+          </q-item>
+        </q-list>
       </div>
     </q-drawer>
+
+    <q-page-container style="touch-action:none;" touch-action="none" >
+      <router-view />
+    </q-page-container>
 
     <q-drawer
       v-model="rightDrawerOpen"
       side="right"
-      show-if-above
       bordered
-      content-class="bg-grey-2"
+      elevated
+      :content-style="{ backgroundColor: '#f9f7f0' }"
     >
       <q-list>
         <q-item>
@@ -79,15 +90,15 @@
         <q-item>
           <q-toggle
             v-model="upload"
-            color="accent"
+            color="primary"
             label="Upload Practice"
           />
         </q-item>
+        <q-item>
+          <q-btn @click="save()" style="width:100%" color="secondary" icon="fas fa-check"/>
+        </q-item>
       </q-list>
     </q-drawer>
-    <q-page-container style="touch-action:none;" touch-action="none" >
-      <router-view />
-    </q-page-container>
   </q-layout>
 </template>
 
@@ -95,19 +106,28 @@
 export default {
   name: 'MyLayout',
   mounted: function () {
-    this.sequenceId = this.$router.currentRoute.query.seq || 'Standard'
+    this.setSettings()
     this.saveSequence()
   },
   data () {
     return {
       leftDrawerOpen: false,
       rightDrawerOpen: false,
-      sequenceId: 'Standard',
+      sequenceId: '',
       student: '',
-      upload: true
+      upload: false
     }
   },
   methods: {
+    save () {
+      this.saveSequence()
+      this.rightDrawerOpen = false
+    },
+    setSettings (user) {
+      this.student = this.$router.currentRoute.query.student || this.$store.state.common.user.name
+      this.sequenceId = this.$router.currentRoute.query.seq || this.$store.state.common.user.sequenceId
+      this.upload = this.$store.state.common.user.uploading
+    },
     saveSequence () {
       let user = {
         name: this.student,
@@ -119,8 +139,8 @@ export default {
   },
   watch: {
     rightDrawerOpen: function (updated, previous) {
-      if (updated === false) {
-        this.saveSequence()
+      if (updated === true) {
+        this.setSettings(this.$store.state.common.user)
       }
     }
   }

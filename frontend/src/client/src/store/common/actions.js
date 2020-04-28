@@ -61,7 +61,7 @@ export function fetchSequence (ctx) {
 export function uploadPractice (ctx, update) {
   let sequenceId = ctx.state.user.sequenceId
   if (sequenceId == null || sequenceId === '') {
-    sequenceId = 'Standard'
+    return
   }
 
   let data = {

@@ -3,7 +3,7 @@
     <div class="row justify-center">
       <div class="text-center">
         <q-card class="my-card">
-          <q-card-section class="bg-accent text-white">
+          <q-card-section class="bg-primary text-white">
             <div class="text-h6">
               <span v-if="atStart"> Welcome! </span>
               <span v-if="!atStart && letter != null"> Draw: <b>{{letter}}</b> </span>
@@ -17,9 +17,9 @@
           </q-card-section>
 
           <q-card-actions align="around">
-            <q-btn v-if="atStart" @click="start()" no-caps style="width:100%" color="accent">Start</q-btn>
-            <q-btn v-if="!atStart && letter != null" @click="done()" no-caps icon="fas fa-check" style="width:100%" color="positive"></q-btn>
-            <q-btn v-if="!atStart && letter == null" @click="go()" no-caps style="width:100%" color="accent">Go</q-btn>
+            <q-btn v-if="atStart" @click="start()" no-caps style="width:100%" color="secondary">Start</q-btn>
+            <q-btn v-if="!atStart && letter != null" @click="done()" no-caps icon="fas fa-check" style="width:100%" color="secondary"></q-btn>
+            <q-btn v-if="!atStart && letter == null" @click="go()" no-caps style="width:100%" color="secondary">Go</q-btn>
           </q-card-actions>
         </q-card>
         <q-card class="my-card">
