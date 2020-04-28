@@ -9,7 +9,7 @@ export default {
   pendingQueue: [],
   sequence: {},
   user: {
-    sequenceId: 'Standard',
+    sequenceId: '',
     uploading: true,
     name: ''
   },
