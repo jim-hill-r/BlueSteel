@@ -136,7 +136,6 @@ export function practiceAttempted (ctx, update) {
 }
 
 export function nextLetter (ctx) {
-  console.log(ctx.state)
   if (ctx.state.activeQueue.length < 1) {
     ctx.dispatch('activateLetters')
   }
