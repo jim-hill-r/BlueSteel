@@ -1,5 +1,7 @@
 import { axios } from 'boot/axios'
 
+const STALE_REINTRODUCE_COUNT = 2
+
 // //////////////////
 // FETCH FROM CLOUD
 // //////////////////
@@ -117,14 +119,19 @@ export function practiceAttempted (ctx, update) {
   }
   if (update.success) {
     ctx.commit('recordSuccess', update.letter)
+    ctx.commit('resetFail')
+    if (ctx.state.history[update.letter].singleAttemptSuccesses >= ctx.state.stabilizeCount) {
+      ctx.commit('stabilizeLetter', update.letter)
+    }
     ctx.dispatch('nextLetter')
-    ctx.dispatch('resetLetter', update.letter)
+    ctx.commit('resetLetter', update.letter)
   } else if (ctx.state.history[update.letter].attempts >= ctx.state.retryLimit) {
+    ctx.commit('incrementFail')
+    if (ctx.state.consecutiveFails >= ctx.state.activeQueue.length) {
+      ctx.dispatch('staleFail')
+    }
     ctx.dispatch('nextLetter')
-    ctx.dispatch('resetLetter', update.letter)
-  }
-  if (ctx.state.history[update.letter].singleAttemptSuccesses >= ctx.state.stabilizeCount) {
-    ctx.dispatch('stabilizeLetter', update.letter)
+    ctx.commit('resetLetter', update.letter)
   }
 }
 
@@ -133,14 +140,6 @@ export function nextLetter (ctx) {
     ctx.dispatch('activateLetters')
   }
   ctx.commit('nextLetter')
-}
-
-export function resetLetter (ctx, letter) {
-  ctx.commit('resetLetter', letter)
-}
-
-export function stabilizeLetter (ctx, letter) {
-  ctx.commit('stabilizeLetter', letter)
 }
 
 export function activateLetters (ctx) {
@@ -161,10 +160,18 @@ export function activateLetters (ctx) {
   }
 }
 
-export function lowActive (ctx, level) {
-
-}
-
-export function staleFail (ctx, level) {
-
+export function staleFail (ctx) {
+  if (ctx.state.staleFails > (ctx.state.stableQueue.length / STALE_REINTRODUCE_COUNT)) {
+    ctx.dispatch('activateLetters')
+    ctx.commit('resetStaleFail')
+  } else if (ctx.state.stableQueue.length >= STALE_REINTRODUCE_COUNT) {
+    for (let i = 0; i < STALE_REINTRODUCE_COUNT; i++) {
+      const newLetter = ctx.state.stableQueue[0]
+      ctx.commit('reintroduceLetter', newLetter)
+    }
+  } else {
+    ctx.dispatch('activateLetters')
+  }
+  ctx.commit('recordStaleFail')
+  ctx.commit('resetFail')
 }

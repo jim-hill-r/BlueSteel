@@ -41,6 +41,22 @@ export function incrementAttempts (state, letter) {
   Vue.set(state.history, letter, letterHistory)
 }
 
+export function incrementFail (state) {
+  state.consecutiveFails = state.consecutiveFails + 1 || 1
+}
+
+export function resetFail (state) {
+  state.consecutiveFails = 0
+}
+
+export function recordStaleFail (state) {
+  state.staleFails = state.staleFails + 1 || 1
+}
+
+export function resetStaleFail (state) {
+  state.staleFails = 0
+}
+
 export function recordSuccess (state, letter) {
   let letterHistory = state.history[letter] || {}
   letterHistory.success = true
@@ -57,10 +73,8 @@ export function recordSuccess (state, letter) {
 
 export function nextLetter (state) {
   let next = state.activeQueue.shift()
-  if (state.letter != null && state.letter !== '') {
-    state.activeQueue.push(state.letter)
-  }
   state.letter = next
+  state.activeQueue.push(next)
 }
 
 export function stabilizeLetter (state, letter) {
