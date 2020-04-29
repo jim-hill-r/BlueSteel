@@ -120,34 +120,27 @@ export function practiceAttempted (ctx, update) {
   if (update.success) {
     ctx.commit('recordSuccess', update.letter)
     ctx.commit('resetFail')
+    if (ctx.state.history[update.letter].singleAttemptSuccesses >= ctx.state.stabilizeCount) {
+      ctx.commit('stabilizeLetter', update.letter)
+    }
     ctx.dispatch('nextLetter')
-    ctx.dispatch('resetLetter', update.letter)
+    ctx.commit('resetLetter', update.letter)
   } else if (ctx.state.history[update.letter].attempts >= ctx.state.retryLimit) {
     ctx.commit('incrementFail')
     if (ctx.state.consecutiveFails >= ctx.state.activeQueue.length) {
       ctx.dispatch('staleFail')
     }
     ctx.dispatch('nextLetter')
-    ctx.dispatch('resetLetter', update.letter)
-  }
-  if (ctx.state.history[update.letter].singleAttemptSuccesses >= ctx.state.stabilizeCount) {
-    ctx.dispatch('stabilizeLetter', update.letter)
+    ctx.commit('resetLetter', update.letter)
   }
 }
 
 export function nextLetter (ctx) {
+  console.log(ctx.state)
   if (ctx.state.activeQueue.length < 1) {
     ctx.dispatch('activateLetters')
   }
   ctx.commit('nextLetter')
-}
-
-export function resetLetter (ctx, letter) {
-  ctx.commit('resetLetter', letter)
-}
-
-export function stabilizeLetter (ctx, letter) {
-  ctx.commit('stabilizeLetter', letter)
 }
 
 export function activateLetters (ctx) {
