@@ -4,6 +4,8 @@ export default {
   patterns: {},
   history: {},
   letter: '',
+  consecutiveFails: 0,
+  staleFails: 0,
   activeQueue: [],
   stableQueue: [],
   pendingQueue: [],

@@ -1,5 +1,7 @@
 import { axios } from 'boot/axios'
 
+const STALE_REINTRODUCE_COUNT = 2
+
 // //////////////////
 // FETCH FROM CLOUD
 // //////////////////
@@ -117,9 +119,14 @@ export function practiceAttempted (ctx, update) {
   }
   if (update.success) {
     ctx.commit('recordSuccess', update.letter)
+    ctx.commit('resetFail')
     ctx.dispatch('nextLetter')
     ctx.dispatch('resetLetter', update.letter)
   } else if (ctx.state.history[update.letter].attempts >= ctx.state.retryLimit) {
+    ctx.commit('incrementFail')
+    if (ctx.state.consecutiveFails >= ctx.state.activeQueue.length) {
+      ctx.dispatch('staleFail')
+    }
     ctx.dispatch('nextLetter')
     ctx.dispatch('resetLetter', update.letter)
   }
@@ -161,10 +168,18 @@ export function activateLetters (ctx) {
   }
 }
 
-export function lowActive (ctx, level) {
-
-}
-
-export function staleFail (ctx, level) {
-
+export function staleFail (ctx) {
+  if (ctx.state.staleFails > (ctx.state.stableQueue.length / STALE_REINTRODUCE_COUNT)) {
+    ctx.dispatch('activateLetters')
+    ctx.commit('resetStaleFail')
+  } else if (ctx.state.stableQueue.length >= STALE_REINTRODUCE_COUNT) {
+    for (let i = 0; i < STALE_REINTRODUCE_COUNT; i++) {
+      const newLetter = ctx.state.stableQueue[0]
+      ctx.commit('reintroduceLetter', newLetter)
+    }
+  } else {
+    ctx.dispatch('activateLetters')
+  }
+  ctx.commit('recordStaleFail')
+  ctx.commit('resetFail')
 }
