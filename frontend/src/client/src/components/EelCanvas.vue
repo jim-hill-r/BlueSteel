@@ -150,7 +150,7 @@ export default {
         this.context.lineWidth = 15
       } else if (style === 'EEL') {
         this.context.strokeStyle = '#18B7BE'
-        this.context.lineWidth = 7
+        this.context.lineWidth = 8
       } else if (style === 'PRIMARY_GUIDE') {
         this.context.lineWidth = 6
       } else if (style === 'DOTTED_GUIDE') {
