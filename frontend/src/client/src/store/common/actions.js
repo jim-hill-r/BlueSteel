@@ -28,7 +28,7 @@ export function fetchSequence (ctx) {
       ['feature', 'coming', 'soon']
     ]
   }
-  if (ctx.state.user != null && ctx.state.user.sequenceId != null && ctx.state.user.sequenceId === 'Tm9haCBH') {
+  if (ctx.state.user != null && ctx.state.user.sequence != null && ctx.state.user.sequence === 'Tm9haCBH') {
     sequence = {
       letters: [
         ['n', 't', 'm', 'f'],
@@ -40,7 +40,7 @@ export function fetchSequence (ctx) {
       ]
     }
   }
-  if (ctx.state.user != null && ctx.state.user.sequenceId != null && ctx.state.user.sequenceId === 'QnJlbmRh') {
+  if (ctx.state.user != null && ctx.state.user.sequence != null && ctx.state.user.sequence === 'QnJlbmRh') {
     sequence = {
       letters: [
         ['n', 'b', 's', 'r', 'k', 'e', 'p']
@@ -51,7 +51,7 @@ export function fetchSequence (ctx) {
       ]
     }
   }
-  if (ctx.state.user != null && ctx.state.user.sequenceId != null && ctx.state.user.sequenceId === 'jim') {
+  if (ctx.state.user != null && ctx.state.user.sequence != null && ctx.state.user.sequence === 'jim') {
     sequence = {
       letters: [
         ['j', 'i', 'm'],
@@ -88,8 +88,8 @@ export function fetchSequence (ctx) {
 // UPLOAD TO CLOUD
 // //////////////////
 export function uploadPractice (ctx, update) {
-  let sequenceId = ctx.state.user.sequenceId
-  if (sequenceId == null || sequenceId === '') {
+  let sequence = ctx.state.user.sequence
+  if (sequence == null || sequence === '') {
     return
   }
 
@@ -107,7 +107,7 @@ export function uploadPractice (ctx, update) {
     }
   }
   let filename = `${timestamp}.json`
-  axios.put(`https://eel3-data.s3.us-east-2.amazonaws.com/practice/${sequenceId}/${filename}`, data, config)
+  axios.put(`https://eel3-data.s3.us-east-2.amazonaws.com/practice/${sequence}/${filename}`, data, config)
 }
 
 // //////////////////
@@ -185,4 +185,16 @@ export function staleFail (ctx) {
   }
   ctx.commit('recordStaleFail')
   ctx.commit('resetFail')
+}
+
+export function completedTechnique (ctx) {
+  if (ctx.state.user.technique === 'Tracing') {
+    ctx.commit('setTechnique', 'Pattern')
+  } else if (this.level === 'pattern') {
+    ctx.commit('setTechnique', 'Freeform')
+  } else {
+    ctx.commit('setTechnique', 'Tracing')
+    this.$router.push({ name: 'congratulations' })
+  }
+  ctx.dispatch('startPractice')
 }

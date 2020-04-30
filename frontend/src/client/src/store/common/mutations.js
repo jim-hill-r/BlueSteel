@@ -8,6 +8,10 @@ export function setSequence (state, sequence) {
   state.sequence = sequence
 }
 
+export function setTechnique (state, technique) {
+  Vue.set(state.user, 'technique', technique)
+}
+
 export function setRetryLimit (state, limit) {
   state.retryLimit = limit
 }

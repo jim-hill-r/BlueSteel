@@ -122,15 +122,7 @@ export default {
       this.isCanvasActive = true
     },
     go () {
-      if (this.level === 'tracing') {
-        this.$router.push({ name: 'pattern' })
-      } else if (this.level === 'pattern') {
-        this.$router.push({ name: 'freeform' })
-      } else if (this.level === 'freeform') {
-        this.$router.push({ name: 'word' })
-      } else {
-        this.$router.push({ name: 'congratulations' })
-      }
+      this.$store.dispatch('common/completedTechnique')
     }
   }
 }

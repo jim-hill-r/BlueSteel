@@ -12,9 +12,10 @@ export default {
   level: '',
   sequence: {},
   user: {
-    sequenceId: '',
+    sequence: '',
     uploading: true,
-    name: ''
+    name: '',
+    technique: 'Tracing'
   },
   retryLimit: 3,
   stabilizeCount: 3,
