@@ -40,6 +40,17 @@ export function fetchSequence (ctx) {
       ]
     }
   }
+  if (ctx.state.user != null && ctx.state.user.sequenceId != null && ctx.state.user.sequenceId === 'QnJlbmRh') {
+    sequence = {
+      letters: [
+        ['n', 'b', 's', 'r', 'k', 'e', 'p']
+      ],
+      words: [
+        ['trains', 'are', 'cool'],
+        ['planes', 'fly', 'high']
+      ]
+    }
+  }
   if (ctx.state.user != null && ctx.state.user.sequenceId != null && ctx.state.user.sequenceId === 'jim') {
     sequence = {
       letters: [
