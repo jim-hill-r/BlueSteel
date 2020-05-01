@@ -8,6 +8,11 @@ export function setSequence (state, sequence) {
   state.sequence = sequence
 }
 
+export function setLevel (state, level) {
+  console.log(level)
+  state.level = level
+}
+
 export function setTechnique (state, technique) {
   Vue.set(state.user, 'technique', technique)
 }
@@ -105,13 +110,12 @@ export function reintroduceLetter (state, letter) {
   state.activeQueue.push(letter)
 }
 
-export function resetState (state, level) {
+export function resetState (state) {
   state.history = {}
   state.letter = ''
   state.activeQueue = []
   state.stableQueue = []
-  state.level = level
-  if (level === 'word') {
+  if (state.level === 'word') {
     state.pendingQueue = Array.from(state.sequence.words, block => Array.from(block, word => word))
   } else {
     state.pendingQueue = Array.from(state.sequence.letters, block => Array.from(block, letter => letter))

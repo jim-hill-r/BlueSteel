@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <EelPractice :level="technique"></EelPractice>
+    <EelPractice></EelPractice>
   </q-page>
 </template>
 
@@ -12,10 +12,8 @@ export default {
   components: {
     EelPractice
   },
-  computed: {
-    technique: function () {
-      return this.$store.state.common.user.technique.toLowerCase()
-    }
+  created: function () {
+    this.$store.dispatch('common/changeLevel', 'letter')
   }
 }
 </script>

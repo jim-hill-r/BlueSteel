@@ -118,14 +118,20 @@ export function loginUser (ctx, user) {
   ctx.dispatch('fetchSequence')
 }
 
-export function startPractice (ctx, level) {
-  ctx.commit('resetState', level)
+export function changeLevel (ctx, level) {
+  ctx.commit('setLevel', level)
+}
+
+export function startPractice (ctx) {
+  ctx.commit('resetState')
   ctx.dispatch('nextLetter')
 }
 
 export function practiceAttempted (ctx, update) {
   ctx.commit('incrementAttempts', update.letter)
   if (ctx.state.user.uploading) {
+    update.technique = ctx.state.user.technique
+    update.level = ctx.state.level
     ctx.dispatch('uploadPractice', update)
   }
   if (update.success) {

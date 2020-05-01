@@ -41,9 +41,6 @@ export default {
   components: {
     EelCanvas
   },
-  props: {
-    level: String
-  },
   data () {
     return {
       isCanvasActive: false,
@@ -66,7 +63,7 @@ export default {
   methods: {
     start () {
       this.atStart = false
-      this.$store.dispatch('common/startPractice', this.level)
+      this.$store.dispatch('common/startPractice')
       this.refresh()
     },
     done () {
@@ -74,7 +71,6 @@ export default {
       let update = {
         success: this.validateSuccess(),
         letter: this.letter,
-        level: this.level,
         pattern: {
           letter: this.letter,
           dimensions: recording.dimensions,
@@ -105,9 +101,9 @@ export default {
     },
     demonstrateLetter () {
       if (this.$store.state.common.patterns[this.letter]) {
-        if (this.level === 'tracing') {
+        if (this.$store.state.common.user.technique === 'Tracing') {
           this.$refs.whiteboard.draw(this.$store.state.common.patterns[this.letter].path, true)
-        } else if (this.level === 'pattern') {
+        } else if (this.$store.state.common.user.technique === 'Pattern') {
           this.$refs.whiteboard.draw(this.$store.state.common.patterns[this.letter].path, false)
         } else {
           setTimeout(() => {

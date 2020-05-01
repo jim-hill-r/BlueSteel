@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <EelPractice level="word"></EelPractice>
+    <EelPractice></EelPractice>
   </q-page>
 </template>
 
@@ -11,6 +11,9 @@ export default {
   name: 'PageWord',
   components: {
     EelPractice
+  },
+  created: function () {
+    this.$store.dispatch('common/changeLevel', 'word')
   }
 }
 </script>
