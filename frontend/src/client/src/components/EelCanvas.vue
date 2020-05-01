@@ -1,9 +1,13 @@
 <template>
-  <canvas style="touch-action:none;" touch-action="none" id="mainCanvas" ref="mainCanvas"></canvas>
+  <canvas
+    style="touch-action:none;"
+    touch-action="none"
+    id="mainCanvas"
+    ref="mainCanvas">
+  </canvas>
 </template>
 
 <script>
-
 export default {
   name: 'EelCanvas',
   props: {
@@ -44,9 +48,9 @@ export default {
     styleCanvas () {
       this.heightInMM = 85
       const pixelRatio = 1 // window.devicePixelRatio || 1
-      this.canvas.style.width = '300px'
-      this.canvas.style.height = `${this.heightInMM}mm`
-      this.canvas.style.height = `${this.canvas.clientHeight * 7 / 5}px`
+      this.canvas.style.width = '100%'
+      this.canvas.style.height = '98%'
+      // this.canvas.style.height = `${this.canvas.clientHeight * 7 / 5}px`
       this.canvas.width = this.canvas.clientWidth * pixelRatio
       this.canvas.height = this.canvas.clientHeight * pixelRatio
       const canvasTopMarginRatio = 5 / this.heightInMM

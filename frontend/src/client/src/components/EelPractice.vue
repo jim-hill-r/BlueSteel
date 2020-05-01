@@ -1,35 +1,27 @@
 <template>
-  <div>
-    <div class="row justify-center">
-      <div class="text-center">
-        <q-card class="my-card">
-          <q-card-section class="bg-primary text-white">
-            <div class="text-h6">
-              <span v-if="atStart"> Welcome! </span>
-              <span v-if="!atStart && letter != null"> Draw: <b>{{letter}}</b> </span>
-              <span v-if="!atStart && letter == null"> You are ready for the next level! </span>
-            </div>
-            <div class="text-subtitle2">
-              <span v-if="atStart"> Click start when you are ready to begin. </span>
-              <span v-if="!atStart && letter != null"> {{feedback}} </span>
-              <span v-if="!atStart && letter == null"> Amazing!  </span>
-            </div>
-          </q-card-section>
-
-          <q-card-actions align="around">
-            <q-btn v-if="atStart" @click="start()" no-caps style="width:100%" color="secondary">Start</q-btn>
-            <q-btn v-if="!atStart && letter != null" @click="done()" no-caps icon="fas fa-check" style="width:100%" color="secondary"></q-btn>
-            <q-btn v-if="!atStart && letter == null" @click="go()" no-caps style="width:100%" color="secondary">Go</q-btn>
-          </q-card-actions>
-        </q-card>
-        <q-card class="my-card">
-          <q-card-section>
-            <EelCanvas v-on:animationcomplete="demoComplete()" :active="isCanvasActive" ref="whiteboard"></EelCanvas>
-          </q-card-section>
-        </q-card>
+  <q-card class="column col-12 text-center">
+    <q-card-section class="bg-primary text-white">
+      <div class="text-h6">
+        <span v-if="atStart"> Welcome! </span>
+        <span v-if="!atStart && letter != null"> Try <b>{{letter}}</b> </span>
+        <span v-if="!atStart && letter == null"> You are ready for the next level! </span>
       </div>
-    </div>
-  </div>
+      <div class="text-subtitle2">
+        <span v-if="atStart"> Click start when you are ready to begin. </span>
+        <span v-if="!atStart && letter != null"> {{feedback}} </span>
+        <span v-if="!atStart && letter == null"> Amazing!  </span>
+      </div>
+    </q-card-section>
+
+    <q-card-actions align="around">
+      <q-btn v-if="atStart" @click="start()" no-caps style="width:100%" color="secondary">Start</q-btn>
+      <q-btn v-if="!atStart && letter != null" @click="done()" no-caps icon="fas fa-check" style="width:100%" color="secondary"></q-btn>
+      <q-btn v-if="!atStart && letter == null" @click="go()" no-caps style="width:100%" color="secondary">Go</q-btn>
+    </q-card-actions>
+    <q-card-section class="col">
+      <EelCanvas v-on:animationcomplete="demoComplete()" :active="isCanvasActive" ref="whiteboard"></EelCanvas>
+    </q-card-section>
+  </q-card>
 </template>
 
 <script>
