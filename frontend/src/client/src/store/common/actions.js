@@ -151,7 +151,7 @@ export function practiceAttempted (ctx, update) {
     ctx.commit('recordSuccess', update.expression)
     ctx.commit('resetFail')
     if (ctx.state.history[update.expression].singleAttemptSuccesses >= ctx.state.stabilizeCount) {
-      ctx.commit('stabilizeexpression', update.expression)
+      ctx.commit('stabilizeExpression', update.expression)
     }
     ctx.dispatch('nextExpression')
     ctx.commit('resetExpression', update.expression)
@@ -167,12 +167,12 @@ export function practiceAttempted (ctx, update) {
 
 export function nextExpression (ctx) {
   if (ctx.state.activeQueue.length < 1) {
-    ctx.dispatch('activateexpressions')
+    ctx.dispatch('activateExpressions')
   }
   ctx.commit('nextExpression')
 }
 
-export function activateexpressions (ctx) {
+export function activateExpressions (ctx) {
   let countToReintroduce = 0
 
   if (ctx.state.pendingQueue.length > 0) {
@@ -185,22 +185,22 @@ export function activateexpressions (ctx) {
   }
 
   for (let i = 0; i < countToReintroduce; i++) {
-    const newexpression = ctx.state.stableQueue[0]
-    ctx.commit('reintroduceexpression', newexpression)
+    const newExpression = ctx.state.stableQueue[0]
+    ctx.commit('reintroduceExpression', newExpression)
   }
 }
 
 export function staleFail (ctx) {
   if (ctx.state.staleFails > (ctx.state.stableQueue.length / STALE_REINTRODUCE_COUNT)) {
-    ctx.dispatch('activateexpressions')
+    ctx.dispatch('activateExpressions')
     ctx.commit('resetStaleFail')
   } else if (ctx.state.stableQueue.length >= STALE_REINTRODUCE_COUNT) {
     for (let i = 0; i < STALE_REINTRODUCE_COUNT; i++) {
-      const newexpression = ctx.state.stableQueue[0]
-      ctx.commit('reintroduceexpression', newexpression)
+      const newExpression = ctx.state.stableQueue[0]
+      ctx.commit('reintroduceExpression', newExpression)
     }
   } else {
-    ctx.dispatch('activateexpressions')
+    ctx.dispatch('activateExpressions')
   }
   ctx.commit('recordStaleFail')
   ctx.commit('resetFail')
