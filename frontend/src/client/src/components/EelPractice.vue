@@ -19,7 +19,12 @@
       <q-btn v-if="!atStart && expression == null" @click="go()" no-caps style="width:100%" color="secondary">Go</q-btn>
     </q-card-actions>
     <q-card-section class="col">
-      <EelCanvas v-on:animationcomplete="demoComplete()" :active="isCanvasActive" ref="whiteboard"></EelCanvas>
+      <EelCanvas
+        v-on:animationcomplete="demoComplete()"
+        :active="isCanvasActive"
+        :aspectRatio="canvasWidth/canvasHeight"
+        ref="whiteboard">
+      </EelCanvas>
     </q-card-section>
   </q-card>
 </template>
@@ -36,19 +41,16 @@ export default {
   data () {
     return {
       isCanvasActive: false,
+      canvasWidth: 1,
+      canvasHeight: 1,
       atStart: true,
       feedback: 'Have fun!'
     }
   },
   computed: {
-    complete: {
-      get () {
-        return !this.$store.state.common.complete
-      }
-    },
     expression: {
       get () {
-        return this.$store.state.common.letter
+        return this.$store.state.common.expression
       }
     }
   },
@@ -64,7 +66,7 @@ export default {
         success: this.validateSuccess(),
         expression: this.expression,
         pattern: {
-          letter: this.expression,
+          expression: this.expression,
           dimensions: recording.dimensions,
           path: recording.path
         }
@@ -81,27 +83,27 @@ export default {
       this.$refs.whiteboard.clear()
       this.demonstrateExpression()
     },
+    generatePattern () {
+      return this.$store.state.common.patterns[this.expression]
+    },
     validateSuccess () {
       let recordedPattern = this.$refs.whiteboard.getRecording()
       for (let i = 0; i < this.expression.length; i++) {
-        let currentPattern = this.$store.state.common.patterns[this.expression[i]]
-        if (!compare(currentPattern, recordedPattern)) {
+        if (!compare(this.generatePattern(), recordedPattern)) {
           return false
         }
       }
       return true
     },
     demonstrateExpression () {
-      if (this.$store.state.common.patterns[this.expression]) {
-        if (this.$store.state.common.user.technique === 'Tracing') {
-          this.$refs.whiteboard.draw(this.$store.state.common.patterns[this.expression], true)
-        } else if (this.$store.state.common.user.technique === 'Pattern') {
-          this.$refs.whiteboard.draw(this.$store.state.common.patterns[this.expression], false)
-        } else {
-          setTimeout(() => {
-            this.demoComplete()
-          }, 1500)
-        }
+      if (this.$store.state.common.user.technique === 'Tracing') {
+        this.$refs.whiteboard.draw(this.generatePattern(), true)
+      } else if (this.$store.state.common.user.technique === 'Pattern') {
+        this.$refs.whiteboard.draw(this.generatePattern(), false)
+      } else {
+        setTimeout(() => {
+          this.demoComplete()
+        }, 1500)
       }
     },
     demoComplete (event) {

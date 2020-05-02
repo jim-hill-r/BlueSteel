@@ -3,7 +3,7 @@ export default {
   patternsLoading: true,
   patterns: {},
   history: {},
-  letter: '',
+  expression: '',
   consecutiveFails: 0,
   staleFails: 0,
   activeQueue: [],

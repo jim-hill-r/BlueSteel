@@ -1,13 +1,18 @@
 import * as Vector from './vector'
 
 export function dimensions (path) {
-  let mins = path.reduce((min, p) => {
-    return { x: Math.min(min.x, p.x), y: Math.min(min.y, p.y) }
-  })
+  let mins = { x: 0, y: 0 }
+  let maxs = { x: 0, y: 0 }
 
-  let maxs = path.reduce((max, p) => {
-    return { x: Math.max(max.x, p.x), y: Math.max(max.y, p.y) }
-  })
+  if (path !== null && path.length > 0) {
+    mins = path.reduce((min, p) => {
+      return { x: Math.min(min.x, p.x), y: Math.min(min.y, p.y) }
+    })
+
+    maxs = path.reduce((max, p) => {
+      return { x: Math.max(max.x, p.x), y: Math.max(max.y, p.y) }
+    })
+  }
 
   return {
     h: maxs.y - mins.y,

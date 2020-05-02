@@ -3,12 +3,12 @@ import * as Vector from './vector.js'
 import * as Pattern from './pattern.js'
 
 export function compare (a, b) {
-  let pathA = Pattern.normalize(a)
-  let pathB = Pattern.normalize(b)
-  return comparePathLength(pathA, pathB) &&
-    comparePoints(pathA, pathB, 'start') &&
-    comparePoints(pathA, pathB, 'end') &&
-    compareDimensions(pathA, pathB)
+  let patternA = Pattern.normalize(a)
+  let patternB = Pattern.normalize(b)
+  return comparePathLength(patternA.path, patternB.path) &&
+    comparePoints(patternA.path, patternB.path, 'start') &&
+    comparePoints(patternA.path, patternB.path, 'end') &&
+    compareDimensions(patternA.path, patternB.path)
 }
 
 function comparePathLength (a, b) {
@@ -54,8 +54,6 @@ function comparePoints (a, b, typeFilter) {
 function compareDimensions (a, b) {
   let dimA = Path.dimensions(a)
   let dimB = Path.dimensions(b)
-  console.log(dimA)
-  console.log(dimB)
 
   let errorW = Math.abs(dimA.w - dimB.w) / dimA.w
   if (errorW > 0.125) {

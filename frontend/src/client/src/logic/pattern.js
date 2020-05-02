@@ -1,13 +1,25 @@
 import * as Path from './path'
 
 export function normalize (pattern) {
-  if (!pattern.path || pattern.path.length < 1) {
-    return []
+  const normalizedCapHeight = 100
+  let patternCapHeight = pattern.boundary.baseLine - pattern.boundary.capLine
+  let scaleFactor = normalizedCapHeight / patternCapHeight
+
+  let normalizedBoundary = {
+    top: pattern.boundary.top * scaleFactor,
+    ascenderLine: pattern.boundary.ascenderLine * scaleFactor,
+    capLine: pattern.boundary.capLine * scaleFactor,
+    meanLine: pattern.boundary.meanLine * scaleFactor,
+    baseLine: pattern.boundary.baseLine * scaleFactor,
+    beardLine: pattern.boundary.beardLine * scaleFactor,
+    bottom: pattern.boundary.bottom * scaleFactor
   }
-  let patternHeight = pattern.dimensions.lowerGuidePixels - pattern.dimensions.upperGuidePixels
-  let normalizedHeight = 100
-  let scaledPath = Path.scale(pattern.path, normalizedHeight / patternHeight)
+  let scaledPath = Path.scale(pattern.path, scaleFactor)
   let dims = Path.dimensions(scaledPath)
-  scaledPath = Path.move(scaledPath, { x: -1 * dims.min.x, y: -1 * dims.min.y })
-  return scaledPath
+  let normalizedPath = Path.move(scaledPath, { x: -1 * dims.min.x })
+  return {
+    letter: pattern.letter,
+    boundary: normalizedBoundary,
+    path: normalizedPath
+  }
 }
