@@ -101,8 +101,10 @@ export default {
       return true
     },
     demonstrateExpression () {
-      let pattern = this.generatePattern()
-      this.$refs.whiteboard.draw(pattern, this.$store.state.common.user.technique)
+      if (this.expression && this.expression.length > 0) {
+        let pattern = this.generatePattern()
+        this.$refs.whiteboard.draw(pattern, this.$store.state.common.user.technique)
+      }
     },
     demoComplete (event) {
       this.feedback = 'Begin'
