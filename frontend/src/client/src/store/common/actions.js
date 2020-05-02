@@ -38,7 +38,7 @@ export function fetchSequence (ctx) {
       ['q', 'w', 'x', 'y', 'z']
     ],
     words: [
-      ['feature', 'coming', 'soon']
+      ['hi', 'have', 'fun']
     ]
   }
   if (ctx.state.user != null && ctx.state.user.sequence != null && ctx.state.user.sequence === 'Tm9haCBH') {

@@ -9,7 +9,6 @@ export function setSequence (state, sequence) {
 }
 
 export function setLevel (state, level) {
-  console.log(level)
   state.level = level
 }
 

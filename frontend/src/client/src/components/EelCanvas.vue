@@ -14,12 +14,17 @@ import { dimensions, scale, move } from '../logic/path.js'
 export default {
   name: 'EelCanvas',
   props: {
-    active: Boolean,
-    aspectRatio: Number
+    active: Boolean
   },
   data () {
     return {
-      recordedPoints: []
+      recordedPoints: [],
+      aspectRatio: 1
+    }
+  },
+  watch: {
+    aspectRatio: function () {
+      this.configureSize()
     }
   },
   mounted: function () {
@@ -135,8 +140,10 @@ export default {
       this.endDraw(this.prevPoint)
     },
     endDraw (point) {
-      point.type = 'end'
-      this.segmentDraw(point)
+      if (point) {
+        point.type = 'end'
+        this.segmentDraw(point)
+      }
       this.drawing = false
     },
     handleMouseLeave (event) {
@@ -149,7 +156,13 @@ export default {
       this.context.lineCap = 'round'
       this.context.strokeStyle = '#072A40'
       this.context.setLineDash([])
-      if (style === 'START_CIRCLE') {
+      if (style === 'USER') {
+        this.context.strokeStyle = '#178CA4'
+        this.context.lineWidth = 15
+      } else if (style === 'EEL') {
+        this.context.strokeStyle = '#18B7BE'
+        this.context.lineWidth = 8
+      } else if (style === 'START_CIRCLE') {
         this.context.strokeStyle = 'white'
         this.context.fillStyle = '#5A8100'
         this.context.lineWidth = 2
@@ -157,12 +170,6 @@ export default {
         this.context.strokeStyle = 'white'
         this.context.fillStyle = '#B74803'
         this.context.lineWidth = 2
-      } else if (style === 'USER') {
-        this.context.strokeStyle = '#178CA4'
-        this.context.lineWidth = 15
-      } else if (style === 'EEL') {
-        this.context.strokeStyle = '#18B7BE'
-        this.context.lineWidth = 8
       } else if (style === 'CAP_LINE' || style === 'BASE_LINE') {
         this.context.lineWidth = 6
       } else if (style === 'MEAN_LINE') {
@@ -197,6 +204,10 @@ export default {
       this.paintLine({ x: 0, y: this.boundary.meanLine }, { x: this.canvas.width, y: this.boundary.meanLine })
       this.setStrokeStyle('USER')
     },
+    setAspectRatio (pattern) {
+      this.aspectRatio = dimensions(pattern).ar
+      this.configureSize()
+    },
     fit (pattern) {
       let patternHeight = pattern.boundary.baseLine - pattern.boundary.capLine
       let canvasHeight = this.boundary.baseLine - this.boundary.capLine
@@ -205,18 +216,22 @@ export default {
       scaledPath = move(scaledPath, { x: 0.5 * this.canvas.width - dims.c.x, y: 0 })
       return scaledPath
     },
-    draw (pattern, includePath) {
+    draw (pattern, technique) {
+      this.setAspectRatio(pattern)
       let points = this.fit(pattern)
-      if (!points || points.length < 0) {
-        return
+      if (!points || points.length < 0 || technique === 'Freeform') {
+        setTimeout(() => {
+          this.$emit('animationcomplete')
+        }, 1200)
       }
+
       this.animationSegment = 0
       this.animationPoints = points
 
       let drawTime = 3000 // milliseconds
       this.timePerPoint = drawTime / this.animationPoints.length
 
-      if (includePath === false) {
+      if (technique === 'Pattern') {
         this.animationPoints = points.filter(point => point.type === 'start' || point.type === 'end')
         this.timePerPoint = 400 // milliseconds
       }

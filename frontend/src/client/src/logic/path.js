@@ -17,6 +17,7 @@ export function dimensions (path) {
   return {
     h: maxs.y - mins.y,
     w: maxs.x - mins.x,
+    ar: (maxs.x - mins.x) / (maxs.y - mins.y),
     c: {
       x: 0.5 * (mins.x + maxs.x),
       y: 0.5 * (mins.y + maxs.y)

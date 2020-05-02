@@ -22,7 +22,6 @@
       <EelCanvas
         v-on:animationcomplete="demoComplete()"
         :active="isCanvasActive"
-        :aspectRatio="canvasWidth/canvasHeight"
         ref="whiteboard">
       </EelCanvas>
     </q-card-section>
@@ -32,6 +31,7 @@
 <script>
 import EelCanvas from '../components/EelCanvas.vue'
 import { compare } from '../logic/validate.js'
+import { concatenate } from '../logic/pattern.js'
 
 export default {
   name: 'EelPractice',
@@ -41,8 +41,6 @@ export default {
   data () {
     return {
       isCanvasActive: false,
-      canvasWidth: 1,
-      canvasHeight: 1,
       atStart: true,
       feedback: 'Have fun!'
     }
@@ -84,7 +82,14 @@ export default {
       this.demonstrateExpression()
     },
     generatePattern () {
-      return this.$store.state.common.patterns[this.expression]
+      let patterns = []
+      for (let i = 0; i < this.expression.length; i++) {
+        let pattern = this.$store.state.common.patterns[this.expression[i]]
+        if (pattern) {
+          patterns.push(pattern)
+        }
+      }
+      return concatenate(patterns)
     },
     validateSuccess () {
       let recordedPattern = this.$refs.whiteboard.getRecording()
@@ -96,15 +101,8 @@ export default {
       return true
     },
     demonstrateExpression () {
-      if (this.$store.state.common.user.technique === 'Tracing') {
-        this.$refs.whiteboard.draw(this.generatePattern(), true)
-      } else if (this.$store.state.common.user.technique === 'Pattern') {
-        this.$refs.whiteboard.draw(this.generatePattern(), false)
-      } else {
-        setTimeout(() => {
-          this.demoComplete()
-        }, 1500)
-      }
+      let pattern = this.generatePattern()
+      this.$refs.whiteboard.draw(pattern, this.$store.state.common.user.technique)
     },
     demoComplete (event) {
       this.feedback = 'Begin'
