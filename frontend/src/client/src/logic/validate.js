@@ -35,7 +35,9 @@ function comparePoints (a, b, typeFilter) {
   let filteredA = a.filter(point => point.type === typeFilter)
   let filteredB = b.filter(point => point.type === typeFilter)
 
-  let size = Path.size(a)
+  let dimA = Path.dimensions(a)
+  let size = Math.max(dimA.w, dimA.h)
+
   for (let i = 0; i < filteredA.length; i++) {
     let minDist = size
     for (let j = 0; j < filteredB.length; j++) {
@@ -54,23 +56,24 @@ function comparePoints (a, b, typeFilter) {
 function compareDimensions (a, b) {
   let dimA = Path.dimensions(a)
   let dimB = Path.dimensions(b)
+  let size = Math.max(dimA.w, dimA.h)
 
-  let errorW = Math.abs(dimA.w - dimB.w) / dimA.w
+  let errorW = Math.abs(dimA.w - dimB.w) / size
   if (errorW > 0.125) {
     return false
   }
 
-  let errorH = Math.abs(dimA.h - dimB.h) / dimB.h
+  let errorH = Math.abs(dimA.h - dimB.h) / size
   if (errorH > 0.125) {
     return false
   }
 
-  let errorCx = Math.abs(dimA.c.x - dimB.c.x) / dimA.w
+  let errorCx = Math.abs(dimA.c.x - dimB.c.x) / size
   if (errorCx > 0.1) {
     return false
   }
 
-  let errorCy = Math.abs(dimA.c.y - dimB.c.y) / dimA.h
+  let errorCy = Math.abs(dimA.c.y - dimB.c.y) / size
   if (errorCy > 0.1) {
     return false
   }

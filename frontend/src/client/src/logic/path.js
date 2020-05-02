@@ -27,11 +27,6 @@ export function dimensions (path) {
   }
 }
 
-export function size (path) {
-  let d = dimensions(path)
-  return Math.max(d.h, d.w)
-}
-
 export function simplify (originalPath, desiredPoints) {
   let p = originalPath.slice(0, originalPath.length)
   let ptsToBeRemoved = p.length - desiredPoints
