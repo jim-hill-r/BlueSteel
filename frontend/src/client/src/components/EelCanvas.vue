@@ -22,11 +22,6 @@ export default {
       aspectRatio: 1
     }
   },
-  watch: {
-    aspectRatio: function () {
-      this.configureSize()
-    }
-  },
   mounted: function () {
     this.canvas = this.$refs.mainCanvas
     this.context = this.canvas.getContext('2d')
