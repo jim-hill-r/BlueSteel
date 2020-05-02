@@ -1,13 +1,16 @@
 <template>
-  <canvas
-    style="touch-action:none;"
-    touch-action="none"
-    id="mainCanvas"
-    ref="mainCanvas">
-  </canvas>
+    <canvas
+      style="touch-action:none;"
+      touch-action="none"
+      id="mainCanvas"
+      ref="mainCanvas">
+      <q-resize-observer @resize="onResize" debounce="1200" />
+    </canvas>
 </template>
 
 <script>
+import { dimensions, scale, move } from '../logic/path.js'
+
 export default {
   name: 'EelCanvas',
   props: {
@@ -26,6 +29,12 @@ export default {
     this.clear()
   },
   methods: {
+    onResize () {
+      if (this.canvas) {
+        this.styleCanvas()
+        this.clear()
+      }
+    },
     record () {
       this.recordedPoints = []
       this.isRecording = true
@@ -187,7 +196,16 @@ export default {
       this.paintLine({ x: 0, y: this.middleLineY }, { x: this.canvas.width, y: this.middleLineY })
       this.setStrokeStyle('USER')
     },
-    draw (points, includePath) {
+    fit (pattern) {
+      let patternHeight = pattern.dimensions.lowerGuidePixels - pattern.dimensions.upperGuidePixels
+      let canvasHeight = this.lowerLineY - this.upperLineY
+      let scaledPath = scale(pattern.path, canvasHeight / patternHeight)
+      let dims = dimensions(scaledPath)
+      scaledPath = move(scaledPath, { x: 0.5 * this.canvas.width - dims.c.x, y: 0 })
+      return scaledPath
+    },
+    draw (pattern, includePath) {
+      let points = this.fit(pattern)
       if (!points || points.length < 0) {
         return
       }
