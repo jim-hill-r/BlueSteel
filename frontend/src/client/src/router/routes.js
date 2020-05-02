@@ -4,9 +4,7 @@ const routes = [
     component: () => import('layouts/MyLayout.vue'),
     children: [
       { name: 'home', path: '', component: () => import('pages/Index.vue') },
-      { name: 'tracing', path: 'tracing', component: () => import('pages/Tracing.vue') },
-      { name: 'pattern', path: 'pattern', component: () => import('pages/Pattern.vue') },
-      { name: 'freeform', path: 'freeform', component: () => import('pages/Freeform.vue') },
+      { name: 'letter', path: 'letter', component: () => import('pages/Letter.vue') },
       { name: 'word', path: 'word', component: () => import('pages/Word.vue') },
       { name: 'congratulations', path: 'congratulations', component: () => import('pages/Congratulations.vue') }
     ]

@@ -1,9 +1,9 @@
 export default {
-  version: '1.1.0.4',
+  version: '1.1.0.5',
   patternsLoading: true,
   patterns: {},
   history: {},
-  letter: '',
+  expression: '',
   consecutiveFails: 0,
   staleFails: 0,
   activeQueue: [],
@@ -12,9 +12,10 @@ export default {
   level: '',
   sequence: {},
   user: {
-    sequenceId: '',
+    sequence: '',
     uploading: true,
-    name: ''
+    name: '',
+    technique: 'Tracing'
   },
   retryLimit: 3,
   stabilizeCount: 3,

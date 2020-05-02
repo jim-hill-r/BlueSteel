@@ -10,7 +10,7 @@
         <h4 class="text-primary"> Writing made simple! </h4>
       </div>
       <div class="row justify-center">
-        <q-btn color="secondary" no-caps label="Begin" to="tracing" />
+        <q-btn color="secondary" no-caps label="Begin" to="letter" />
       </div>
     </div>
   </q-page>

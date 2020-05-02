@@ -1,8 +1,15 @@
 <template>
-  <canvas style="touch-action:none;" touch-action="none" id="mainCanvas" ref="mainCanvas"></canvas>
+    <canvas
+      style="touch-action:none;"
+      touch-action="none"
+      id="mainCanvas"
+      ref="mainCanvas">
+      <q-resize-observer @resize="onResize" debounce="1200" />
+    </canvas>
 </template>
 
 <script>
+import { dimensions, scale, move } from '../logic/path.js'
 
 export default {
   name: 'EelCanvas',
@@ -11,17 +18,22 @@ export default {
   },
   data () {
     return {
-      recordedPoints: []
+      recordedPoints: [],
+      aspectRatio: 1
     }
   },
   mounted: function () {
     this.canvas = this.$refs.mainCanvas
     this.context = this.canvas.getContext('2d')
-    this.styleCanvas()
-    this.configureCanvas()
-    this.clear()
+    this.configureListeners()
+    this.configureSize()
   },
   methods: {
+    onResize () {
+      if (this.canvas) {
+        this.configureSize()
+      }
+    },
     record () {
       this.recordedPoints = []
       this.isRecording = true
@@ -29,37 +41,37 @@ export default {
     getRecording () {
       this.isRecording = false
       return {
-        dimensions: {
-          heightMM: this.heightInMM,
-          heightPixels: this.canvas.height,
-          widthPixels: this.canvas.width,
-          upperGuidePixels: this.upperLineY,
-          middleGuidePixels: this.middleLineY,
-          lowerGuidePixels: this.lowerLineY,
-          lowestGuidePixels: this.lowestLineY
-        },
+        boundary: this.boundary,
         path: this.recordedPoints
       }
     },
-    styleCanvas () {
-      this.heightInMM = 85
+    configureSize () {
       const pixelRatio = 1 // window.devicePixelRatio || 1
-      this.canvas.style.width = '300px'
-      this.canvas.style.height = `${this.heightInMM}mm`
-      this.canvas.style.height = `${this.canvas.clientHeight * 7 / 5}px`
+      this.canvas.style.width = '100%'
+      this.canvas.style.height = '98%'
+      if (this.aspectRatio !== null && this.aspectRatio !== 0) {
+        let allowableAspectRatio = this.canvas.clientWidth / this.canvas.clientHeight
+        if (allowableAspectRatio < this.aspectRatio) {
+          this.canvas.style.height = `${this.canvas.clientWidth / this.aspectRatio}px`
+        }
+      }
       this.canvas.width = this.canvas.clientWidth * pixelRatio
       this.canvas.height = this.canvas.clientHeight * pixelRatio
-      const canvasTopMarginRatio = 5 / this.heightInMM
-      const canvasTopWritingAreaRatio = 25 / this.heightInMM
-      const canvasWritingAreaRatio = 25 / this.heightInMM
-      const canvasBottomWritingAreaRatio = 25 / this.heightInMM
-      this.upperLineY = canvasTopMarginRatio * this.canvas.height
-      this.middleLineY = this.upperLineY + canvasTopWritingAreaRatio * this.canvas.height
-      this.lowerLineY = this.middleLineY + canvasWritingAreaRatio * this.canvas.height
-      this.lowestLineY = this.lowerLineY + canvasBottomWritingAreaRatio * this.canvas.height
-      this.canvas.style.background = '#F9F7F0'
+      this.configureGuidelines()
+      this.clear()
     },
-    configureCanvas () {
+    configureGuidelines () {
+      this.boundary = {
+        top: 0,
+        ascenderLine: this.canvas.height * (5) / 85,
+        capLine: this.canvas.height * (5) / 85,
+        meanLine: this.canvas.height * (5 + 25) / 85,
+        baseLine: this.canvas.height * (5 + 25 + 25) / 85,
+        beardLine: this.canvas.height * (5 + 25 + 25 + 25) / 85,
+        bottom: this.canvas.height
+      }
+    },
+    configureListeners () {
       this.canvas.addEventListener('mousedown', (e) => this.handleMouseDown(e), false)
       this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e), false)
       this.canvas.addEventListener('mouseup', (e) => this.handleMouseUp(e), false)
@@ -123,8 +135,10 @@ export default {
       this.endDraw(this.prevPoint)
     },
     endDraw (point) {
-      point.type = 'end'
-      this.segmentDraw(point)
+      if (point) {
+        point.type = 'end'
+        this.segmentDraw(point)
+      }
       this.drawing = false
     },
     handleMouseLeave (event) {
@@ -137,7 +151,13 @@ export default {
       this.context.lineCap = 'round'
       this.context.strokeStyle = '#072A40'
       this.context.setLineDash([])
-      if (style === 'START_CIRCLE') {
+      if (style === 'USER') {
+        this.context.strokeStyle = '#178CA4'
+        this.context.lineWidth = 15
+      } else if (style === 'EEL') {
+        this.context.strokeStyle = '#18B7BE'
+        this.context.lineWidth = 8
+      } else if (style === 'START_CIRCLE') {
         this.context.strokeStyle = 'white'
         this.context.fillStyle = '#5A8100'
         this.context.lineWidth = 2
@@ -145,18 +165,12 @@ export default {
         this.context.strokeStyle = 'white'
         this.context.fillStyle = '#B74803'
         this.context.lineWidth = 2
-      } else if (style === 'USER') {
-        this.context.strokeStyle = '#178CA4'
-        this.context.lineWidth = 15
-      } else if (style === 'EEL') {
-        this.context.strokeStyle = '#18B7BE'
-        this.context.lineWidth = 8
-      } else if (style === 'PRIMARY_GUIDE') {
+      } else if (style === 'CAP_LINE' || style === 'BASE_LINE') {
         this.context.lineWidth = 6
-      } else if (style === 'DOTTED_GUIDE') {
+      } else if (style === 'MEAN_LINE') {
         this.context.lineWidth = 3
         this.context.setLineDash([this.canvas.width * 0.04, this.canvas.width * 0.02875])
-      } else if (style === 'MINIMAL_GUIDE') {
+      } else if (style === 'BEARD_LINE') {
         this.context.lineWidth = 3
       }
     },
@@ -173,27 +187,46 @@ export default {
       this.context.stroke()
     },
     clear () {
+      this.canvas.style.background = '#F9F7F0'
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
-      this.setStrokeStyle('PRIMARY_GUIDE')
-      this.paintLine({ x: 0, y: this.lowerLineY }, { x: this.canvas.width, y: this.lowerLineY })
-      this.paintLine({ x: 0, y: this.upperLineY }, { x: this.canvas.width, y: this.upperLineY })
-      this.setStrokeStyle('MINIMAL_GUIDE')
-      this.paintLine({ x: 0, y: this.lowestLineY }, { x: this.canvas.width, y: this.lowestLineY })
-      this.setStrokeStyle('DOTTED_GUIDE')
-      this.paintLine({ x: 0, y: this.middleLineY }, { x: this.canvas.width, y: this.middleLineY })
+      this.setStrokeStyle('CAP_LINE')
+      this.paintLine({ x: 0, y: this.boundary.capLine }, { x: this.canvas.width, y: this.boundary.capLine })
+      this.setStrokeStyle('BASE_LINE')
+      this.paintLine({ x: 0, y: this.boundary.baseLine }, { x: this.canvas.width, y: this.boundary.baseLine })
+      this.setStrokeStyle('BEARD_LINE')
+      this.paintLine({ x: 0, y: this.boundary.beardLine }, { x: this.canvas.width, y: this.boundary.beardLine })
+      this.setStrokeStyle('MEAN_LINE')
+      this.paintLine({ x: 0, y: this.boundary.meanLine }, { x: this.canvas.width, y: this.boundary.meanLine })
       this.setStrokeStyle('USER')
     },
-    draw (points, includePath) {
-      if (!points || points.length < 0) {
-        return
+    setAspectRatio (pattern) {
+      this.aspectRatio = dimensions(pattern).ar
+      this.configureSize()
+    },
+    fit (pattern) {
+      let patternHeight = pattern.boundary.baseLine - pattern.boundary.capLine
+      let canvasHeight = this.boundary.baseLine - this.boundary.capLine
+      let scaledPath = scale(pattern.path, canvasHeight / patternHeight)
+      let dims = dimensions(scaledPath)
+      scaledPath = move(scaledPath, { x: 0.5 * this.canvas.width - dims.c.x, y: 0 })
+      return scaledPath
+    },
+    draw (pattern, technique) {
+      this.setAspectRatio(pattern)
+      let points = this.fit(pattern)
+      if (!points || points.length < 0 || technique === 'Freeform') {
+        setTimeout(() => {
+          this.$emit('animationcomplete')
+        }, 1200)
       }
+
       this.animationSegment = 0
       this.animationPoints = points
 
       let drawTime = 3000 // milliseconds
       this.timePerPoint = drawTime / this.animationPoints.length
 
-      if (includePath === false) {
+      if (technique === 'Pattern') {
         this.animationPoints = points.filter(point => point.type === 'start' || point.type === 'end')
         this.timePerPoint = 400 // milliseconds
       }

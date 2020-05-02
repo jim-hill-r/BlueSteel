@@ -22,31 +22,13 @@
       :content-style="{ backgroundColor: '#f9f7f0' }"
     >
       <q-list>
-        <q-item clickable to="tracing">
+        <q-item clickable to="letter">
           <q-item-section avatar>
-            <q-icon name="fas fa-bacon" />
+            <q-icon name="fas fa-pencil-alt" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Tracing Practice</q-item-label>
-            <q-item-label caption>Practice tracing letters to learn the patterns</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable to="pattern">
-          <q-item-section avatar>
-            <q-icon name="fas fa-draw-polygon" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Pattern Practice</q-item-label>
-            <q-item-label caption>Practice writing letters given a start and finish point</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable to="freeform">
-          <q-item-section avatar>
-            <q-icon name="fas fa-wave-square" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Freeform Practice</q-item-label>
-            <q-item-label caption>Practice writing letters</q-item-label>
+            <q-item-label>Letter Practice</q-item-label>
+            <q-item-label caption>Practice writing individual letters with assistance or freeform </q-item-label>
           </q-item-section>
         </q-item>
         <q-item clickable to="word">
@@ -55,7 +37,7 @@
           </q-item-section>
           <q-item-section>
             <q-item-label>Word Practice</q-item-label>
-            <q-item-label caption>Practice combining letters to make words</q-item-label>
+            <q-item-label caption>Practice combining letters to form complete words</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -82,10 +64,13 @@
     >
       <q-list>
         <q-item>
-          <q-input v-model="sequenceId" label="Sequence" style="width: 100%" />
+          <q-input v-model="student" label="Student" style="width: 100%" />
         </q-item>
         <q-item>
-          <q-input v-model="student" label="Student" style="width: 100%" />
+          <q-input v-model="sequence" label="Sequence" style="width: 100%" />
+        </q-item>
+        <q-item>
+          <q-select v-model="technique" :options="techniqueOptions" label="Technique" style="width: 100%" />
         </q-item>
         <q-item>
           <q-toggle
@@ -113,8 +98,10 @@ export default {
     return {
       leftDrawerOpen: false,
       rightDrawerOpen: false,
-      sequenceId: '',
+      sequence: '',
       student: '',
+      technique: 'Tracing',
+      techniqueOptions: ['Tracing', 'Pattern', 'Freeform'],
       upload: false
     }
   },
@@ -125,13 +112,15 @@ export default {
     },
     setSettings (user) {
       this.student = this.$router.currentRoute.query.student || this.$store.state.common.user.name
-      this.sequenceId = this.$router.currentRoute.query.seq || this.$store.state.common.user.sequenceId
+      this.sequence = this.$router.currentRoute.query.seq || this.$store.state.common.user.sequence
+      this.technique = this.$router.currentRoute.query.tech || this.$store.state.common.user.technique
       this.upload = this.$store.state.common.user.uploading
     },
     saveSequence () {
       let user = {
         name: this.student,
-        sequenceId: this.sequenceId,
+        sequence: this.sequence,
+        technique: this.technique,
         uploading: this.upload
       }
       this.$store.dispatch('common/loginUser', user)
