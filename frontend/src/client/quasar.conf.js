@@ -102,9 +102,8 @@ module.exports = function (ctx) {
         short_name: 'Blue Eel',
         description: 'Learn to read',
         display: 'standalone',
-        orientation: 'portrait',
-        background_color: '#81d4fa',
-        theme_color: '#b3e5fc',
+        background_color: '#178CA4',
+        theme_color: '#178CA4',
         icons: [
           {
             'src': 'statics/icons/icon-128x128.png',

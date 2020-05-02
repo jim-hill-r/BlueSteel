@@ -1,5 +1,5 @@
 <template>
-  <q-page padding>
+  <q-page padding class="row items-stretch">
     <EelPractice></EelPractice>
   </q-page>
 </template>

@@ -1,6 +1,6 @@
 import * as Vector from './vector'
 
-export function size (path) {
+export function dimensions (path) {
   let mins = path.reduce((min, p) => {
     return { x: Math.min(min.x, p.x), y: Math.min(min.y, p.y) }
   })
@@ -9,7 +9,21 @@ export function size (path) {
     return { x: Math.max(max.x, p.x), y: Math.max(max.y, p.y) }
   })
 
-  return Math.max(maxs.x - mins.x, maxs.y - mins.y)
+  return {
+    h: maxs.y - mins.y,
+    w: maxs.x - mins.x,
+    c: {
+      x: 0.5 * (mins.x + maxs.x),
+      y: 0.5 * (mins.y + maxs.y)
+    },
+    min: mins,
+    max: maxs
+  }
+}
+
+export function size (path) {
+  let d = dimensions(path)
+  return Math.max(d.h, d.w)
 }
 
 export function simplify (originalPath, desiredPoints) {
@@ -42,13 +56,13 @@ export function length (path) {
 
 export function move (path, v) {
   return path.map((p) => {
-    return { x: p.x + v.x, y: p.y + v.y }
+    return { x: p.x + v.x, y: p.y + v.y, type: p.type }
   })
 }
 
 export function scale (path, scale) {
   return path.map((p) => {
-    return { x: p.x * scale, y: p.y * scale }
+    return { x: p.x * scale, y: p.y * scale, type: p.type }
   })
 }
 
