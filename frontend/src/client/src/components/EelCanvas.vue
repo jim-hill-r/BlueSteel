@@ -4,7 +4,7 @@
       touch-action="none"
       id="mainCanvas"
       ref="mainCanvas">
-      <q-resize-observer @resize="onResize" debounce="1200" />
+      <!-- <q-resize-observer @resize="onResize" debounce="1200" /> -->
     </canvas>
 </template>
 
@@ -26,12 +26,12 @@ export default {
     this.canvas = this.$refs.mainCanvas
     this.context = this.canvas.getContext('2d')
     this.configureListeners()
-    this.configureSize()
+    this.clear()
   },
   methods: {
     onResize () {
       if (this.canvas) {
-        this.configureSize()
+        // this.configureSize()
       }
     },
     record () {
@@ -58,7 +58,6 @@ export default {
       this.canvas.width = this.canvas.clientWidth * pixelRatio
       this.canvas.height = this.canvas.clientHeight * pixelRatio
       this.configureGuidelines()
-      this.clear()
     },
     configureGuidelines () {
       this.boundary = {
@@ -187,8 +186,10 @@ export default {
       this.context.stroke()
     },
     clear () {
+      this.configureSize()
       this.canvas.style.background = '#F9F7F0'
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
+      console.log(this.boundary)
       this.setStrokeStyle('CAP_LINE')
       this.paintLine({ x: 0, y: this.boundary.capLine }, { x: this.canvas.width, y: this.boundary.capLine })
       this.setStrokeStyle('BASE_LINE')
@@ -201,7 +202,6 @@ export default {
     },
     setAspectRatio (pattern) {
       this.aspectRatio = dimensions(pattern).ar
-      this.configureSize()
     },
     fit (pattern) {
       let patternHeight = pattern.boundary.baseLine - pattern.boundary.capLine
@@ -213,6 +213,7 @@ export default {
     },
     draw (pattern, technique) {
       this.setAspectRatio(pattern)
+      this.clear()
       let points = this.fit(pattern)
       if (!points || points.length < 0 || technique === 'Freeform') {
         setTimeout(() => {
