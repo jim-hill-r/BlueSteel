@@ -25,14 +25,14 @@ export function normalize (pattern) {
 }
 
 export function concatenate (patterns) {
-  const SPACING = 15
+  const normalizedSpacing = 15
   let normalizedPatterns = patterns.map((p) => {
     return normalize(p)
   })
   let concatenatedPath = []
   let expression = ''
   for (let i = 0; i < normalizedPatterns.length; i++) {
-    let startX = Path.dimensions(concatenatedPath).max.x + SPACING || 0
+    let startX = Path.dimensions(concatenatedPath).max.x + normalizedSpacing || 0
     let translatedPath = Path.move(normalizedPatterns[i].path, { x: startX, y: 0 })
     concatenatedPath = concatenatedPath.concat(translatedPath)
     expression += normalizedPatterns[i].letter
