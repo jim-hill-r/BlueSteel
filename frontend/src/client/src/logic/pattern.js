@@ -25,18 +25,14 @@ export function normalize (pattern) {
 }
 
 export function concatenate (patterns) {
+  const normalizedSpacing = 15
   let normalizedPatterns = patterns.map((p) => {
     return normalize(p)
   })
-  let sumWidth = normalizedPatterns.reduce((sum, pattern) => {
-    let dims = Path.dimensions(pattern.path)
-    return sum + dims.w
-  }, 0)
-  let gutter = 0.4 * sumWidth / normalizedPatterns.length
   let concatenatedPath = []
   let expression = ''
   for (let i = 0; i < normalizedPatterns.length; i++) {
-    let startX = Path.dimensions(concatenatedPath).max.x + gutter || 0
+    let startX = Path.dimensions(concatenatedPath).max.x + normalizedSpacing || 0
     let translatedPath = Path.move(normalizedPatterns[i].path, { x: startX, y: 0 })
     concatenatedPath = concatenatedPath.concat(translatedPath)
     expression += normalizedPatterns[i].letter
