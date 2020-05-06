@@ -1,0 +1,1 @@
+APP_BUCKET_NAME = 'eel3-app'

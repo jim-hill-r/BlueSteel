@@ -1,0 +1,1 @@
+COGNITO_USER_POOL = "eel3-accounts"
