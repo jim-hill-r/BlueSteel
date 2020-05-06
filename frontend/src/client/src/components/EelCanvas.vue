@@ -189,7 +189,6 @@ export default {
       this.configureSize()
       this.canvas.style.background = '#F9F7F0'
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
-      console.log(this.boundary)
       this.setStrokeStyle('CAP_LINE')
       this.paintLine({ x: 0, y: this.boundary.capLine }, { x: this.canvas.width, y: this.boundary.capLine })
       this.setStrokeStyle('BASE_LINE')
