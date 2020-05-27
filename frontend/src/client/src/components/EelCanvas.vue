@@ -11,6 +11,12 @@
 <script>
 import { dimensions, scale, move } from '../logic/path.js'
 
+const ASCENDER_RATIO = (5) / 85
+const CAPLINE_RATIO = (5) / 85
+const MEANLINE_RATIO = (5 + 25) / 85
+const BASELINE_RATIO = (5 + 25 + 25) / 85
+const BEARDLINE_RATIO = (5 + 25 + 25 + 25) / 85
+
 export default {
   name: 'EelCanvas',
   props: {
@@ -52,7 +58,9 @@ export default {
       if (this.aspectRatio !== null && this.aspectRatio !== 0) {
         let allowableAspectRatio = this.canvas.clientWidth / this.canvas.clientHeight
         if (allowableAspectRatio < this.aspectRatio) {
-          this.canvas.style.height = `${this.canvas.clientWidth / this.aspectRatio}px`
+          const wordHeight = this.canvas.clientWidth * 0.92 / this.aspectRatio
+          let totalHeight = wordHeight / (BASELINE_RATIO - CAPLINE_RATIO)
+          this.canvas.style.height = `${totalHeight}px`
         }
       }
       this.canvas.width = this.canvas.clientWidth * pixelRatio
@@ -62,11 +70,11 @@ export default {
     configureGuidelines () {
       this.boundary = {
         top: 0,
-        ascenderLine: this.canvas.height * (5) / 85,
-        capLine: this.canvas.height * (5) / 85,
-        meanLine: this.canvas.height * (5 + 25) / 85,
-        baseLine: this.canvas.height * (5 + 25 + 25) / 85,
-        beardLine: this.canvas.height * (5 + 25 + 25 + 25) / 85,
+        ascenderLine: this.canvas.height * ASCENDER_RATIO,
+        capLine: this.canvas.height * CAPLINE_RATIO,
+        meanLine: this.canvas.height * MEANLINE_RATIO,
+        baseLine: this.canvas.height * BASELINE_RATIO,
+        beardLine: this.canvas.height * BEARDLINE_RATIO,
         bottom: this.canvas.height
       }
     },
@@ -200,7 +208,7 @@ export default {
       this.setStrokeStyle('USER')
     },
     setAspectRatio (pattern) {
-      this.aspectRatio = dimensions(pattern).ar
+      this.aspectRatio = dimensions(pattern.path).ar
     },
     fit (pattern) {
       let patternHeight = pattern.boundary.baseLine - pattern.boundary.capLine
