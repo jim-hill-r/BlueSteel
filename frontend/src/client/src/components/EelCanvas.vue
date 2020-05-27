@@ -24,8 +24,7 @@ export default {
   },
   data () {
     return {
-      recordedPoints: [],
-      aspectRatio: 1
+      recordedPoints: []
     }
   },
   mounted: function () {
