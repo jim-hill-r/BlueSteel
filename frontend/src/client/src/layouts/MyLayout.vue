@@ -10,7 +10,9 @@
             </router-link>
           </q-toolbar-title>
 
-          <q-btn flat round dense icon="fas fa-ellipsis-v" label="" @click="rightDrawerOpen = !rightDrawerOpen"/>
+          <div> {{$store.state.user.displayName}} &nbsp; </div>
+          <q-btn v-if="!$store.state.auth.isAuthenticated" flat round dense icon="far fa-user" label="" @click="rightDrawerOpen = !rightDrawerOpen"/>
+          <q-btn v-if="$store.state.auth.isAuthenticated" flat round dense icon="fas fa-user" label="" @click="rightDrawerOpen = !rightDrawerOpen"/>
         </q-toolbar>
       </q-header>
 
@@ -62,7 +64,7 @@
       elevated
       :content-style="{ backgroundColor: '#f9f7f0' }"
     >
-      <q-list>
+      <q-list v-if="$store.state.auth.isAuthenticated">
         <q-item>
           <q-input v-model="student" label="Student" style="width: 100%" />
         </q-item>
@@ -81,6 +83,14 @@
         </q-item>
         <q-item>
           <q-btn @click="save()" style="width:100%" color="secondary" icon="fas fa-check"/>
+        </q-item>
+        <q-item>
+          <q-btn @click="unauthenticate()" style="width:100%" color="secondary" label="Sign Out" />
+        </q-item>
+      </q-list>
+      <q-list v-if="!$store.state.auth.isAuthenticated">
+        <q-item>
+          <q-btn @click="authenticate()" style="width:100%" color="secondary" label="Sign in" />
         </q-item>
       </q-list>
     </q-drawer>
@@ -106,6 +116,12 @@ export default {
     }
   },
   methods: {
+    authenticate () {
+      this.$store.dispatch('auth/authenticate')
+    },
+    unauthenticate () {
+      this.$store.dispatch('auth/unauthenticate')
+    },
     save () {
       this.saveSequence()
       this.rightDrawerOpen = false

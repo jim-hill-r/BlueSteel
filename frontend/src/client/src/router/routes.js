@@ -9,28 +9,18 @@ const routes = [
       { name: 'letter', path: 'letter', meta: { requiredPermission: 'blue:practiceLetter' }, component: () => import('pages/Letter.vue') },
       { name: 'word', path: 'word', component: () => import('pages/Word.vue') },
       { name: 'congratulations', path: 'congratulations', component: () => import('pages/Congratulations.vue') },
-      { name: 'authenticate',
-        path: 'authenticate',
-        beforeEnter: (to, from, next) => {
-          Store.dispatch('auth/authenticate')
-        }
-      },
       { name: 'signin',
         path: 'signin',
         beforeEnter: (to, from, next) => {
-          Store.dispatch('auth/signin')
-        }
-      },
-      { name: 'unauthenticate',
-        path: 'unauthenticate',
-        beforeEnter: (to, from, next) => {
-          Store.dispatch('auth/unauthenticate')
+          Store.dispatch('auth/signin', to.hash)
+          next({ name: 'home' })
         }
       },
       { name: 'signout',
         path: 'signout',
         beforeEnter: (to, from, next) => {
           Store.dispatch('auth/signout')
+          next({ name: 'home' })
         }
       }
     ]
