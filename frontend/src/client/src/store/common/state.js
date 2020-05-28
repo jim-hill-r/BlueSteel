@@ -1,17 +1,21 @@
 export default {
-  version: '1.0.2.0',
+  version: '1.1.0.9',
   patternsLoading: true,
   patterns: {},
   history: {},
-  letter: '',
+  expression: '',
+  consecutiveFails: 0,
+  staleFails: 0,
   activeQueue: [],
   stableQueue: [],
   pendingQueue: [],
+  level: '',
   sequence: {},
   user: {
-    sequenceId: 'Standard',
-    uploading: false,
-    name: ''
+    sequence: '',
+    uploading: true,
+    name: '',
+    technique: 'Tracing'
   },
   retryLimit: 3,
   stabilizeCount: 3,

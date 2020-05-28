@@ -8,12 +8,12 @@
 import EelPractice from '../components/EelPractice.vue'
 
 export default {
-  name: 'PageWord',
+  name: 'LetterPattern',
   components: {
     EelPractice
   },
   created: function () {
-    this.$store.dispatch('common/changeLevel', 'word')
+    this.$store.dispatch('common/changeLevel', 'letter')
   }
 }
 </script>

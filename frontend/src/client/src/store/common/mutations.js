@@ -8,6 +8,14 @@ export function setSequence (state, sequence) {
   state.sequence = sequence
 }
 
+export function setLevel (state, level) {
+  state.level = level
+}
+
+export function setTechnique (state, technique) {
+  Vue.set(state.user, 'technique', technique)
+}
+
 export function setRetryLimit (state, limit) {
   state.retryLimit = limit
 }
@@ -24,73 +32,91 @@ export function setPattern (state, pattern) {
   Vue.set(state.patterns, pattern.letter, pattern)
 }
 
-export function resetLetter (state, letter) {
-  let letterHistory = state.history[letter] || {}
-  letterHistory.previousAttempts = letterHistory.attempts || 0
-  if (letterHistory.previousAttempts > 1) {
-    letterHistory.totalSingleAttemptSuccesses = 0
+export function resetExpression (state, expression) {
+  let expressionHistory = state.history[expression] || {}
+  expressionHistory.previousAttempts = expressionHistory.attempts || 0
+  if (expressionHistory.previousAttempts > 1) {
+    expressionHistory.totalSingleAttemptSuccesses = 0
   }
-  letterHistory.attempts = 0
-  Vue.set(state.history, letter, letterHistory)
+  expressionHistory.attempts = 0
+  Vue.set(state.history, expression, expressionHistory)
 }
 
-export function incrementAttempts (state, letter) {
-  let letterHistory = state.history[letter] || {}
-  letterHistory.attempts = letterHistory.attempts + 1 || 1
-  letterHistory.totalAttempts = letterHistory.totalAttempts + 1 || 1
-  Vue.set(state.history, letter, letterHistory)
+export function incrementAttempts (state, expression) {
+  let expressionHistory = state.history[expression] || {}
+  expressionHistory.attempts = expressionHistory.attempts + 1 || 1
+  expressionHistory.totalAttempts = expressionHistory.totalAttempts + 1 || 1
+  Vue.set(state.history, expression, expressionHistory)
 }
 
-export function recordSuccess (state, letter) {
-  let letterHistory = state.history[letter] || {}
-  letterHistory.success = true
-  if (letterHistory.attempts === 1) {
-    letterHistory.singleAttemptSuccesses = letterHistory.singleAttemptSuccesses + 1 || 1
-    letterHistory.totalSingleAttemptSuccesses = letterHistory.totalSingleAttemptSuccesses + 1 || 1
+export function incrementFail (state) {
+  state.consecutiveFails = state.consecutiveFails + 1 || 1
+}
+
+export function resetFail (state) {
+  state.consecutiveFails = 0
+}
+
+export function recordStaleFail (state) {
+  state.staleFails = state.staleFails + 1 || 1
+}
+
+export function resetStaleFail (state) {
+  state.staleFails = 0
+}
+
+export function recordSuccess (state, expression) {
+  let expressionHistory = state.history[expression] || {}
+  expressionHistory.success = true
+  if (expressionHistory.attempts === 1) {
+    expressionHistory.singleAttemptSuccesses = expressionHistory.singleAttemptSuccesses + 1 || 1
+    expressionHistory.totalSingleAttemptSuccesses = expressionHistory.totalSingleAttemptSuccesses + 1 || 1
+    if (expressionHistory.totalAttempts === 1) { // Bonus for getting it right on your very first try
+      expressionHistory.singleAttemptSuccesses = expressionHistory.singleAttemptSuccesses + 1
+      expressionHistory.totalSingleAttemptSuccesses = expressionHistory.totalSingleAttemptSuccesses + 1
+    }
   }
-  Vue.set(state.history, letter, letterHistory)
+  Vue.set(state.history, expression, expressionHistory)
 }
 
-export function nextLetter (state) {
+export function nextExpression (state) {
   let next = state.activeQueue.shift()
-  if (state.letter != null && state.letter !== '') {
-    state.activeQueue.push(state.letter)
-  }
-  state.letter = next
+  state.expression = next
+  state.activeQueue.push(next)
 }
 
-export function stabilizeLetter (state, letter) {
-  var index = state.activeQueue.indexOf(letter)
+export function stabilizeExpression (state, expression) {
+  var index = state.activeQueue.indexOf(expression)
   if (index !== -1) {
     state.activeQueue.splice(index, 1)
   }
-  state.stableQueue.push(letter)
+  state.stableQueue.push(expression)
 }
 
 export function activateNextBunch (state) {
   let nextBunch = state.pendingQueue.shift()
   while (nextBunch.length > 0) {
-    let letter = nextBunch.shift()
-    state.activeQueue.push(letter)
+    let expression = nextBunch.shift()
+    state.activeQueue.push(expression)
   }
 }
 
-export function reintroduceLetter (state, letter) {
-  var index = state.stableQueue.indexOf(letter)
+export function reintroduceExpression (state, expression) {
+  var index = state.stableQueue.indexOf(expression)
   if (index !== -1) {
     state.stableQueue.splice(index, 1)
   }
-  state.activeQueue.push(letter)
+  state.activeQueue.push(expression)
 }
 
-export function resetState (state, level) {
+export function resetState (state) {
   state.history = {}
-  state.letter = ''
+  state.expression = ''
   state.activeQueue = []
   state.stableQueue = []
-  if (level === 'word') {
+  if (state.level === 'word') {
     state.pendingQueue = Array.from(state.sequence.words, block => Array.from(block, word => word))
   } else {
-    state.pendingQueue = Array.from(state.sequence.letters, block => Array.from(block, letter => letter))
+    state.pendingQueue = Array.from(state.sequence.expressions, block => Array.from(block, expression => expression))
   }
 }
