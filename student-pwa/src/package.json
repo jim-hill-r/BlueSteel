@@ -8,6 +8,7 @@
   "author": "Jim Hill <jim.hill.r@gmail.com>",
   "private": true,
   "scripts": {
+    "build": "quasar build -m pwa -t iso -t android",
     "lint": "eslint --ext .js,.vue src",
     "test": "echo \"No test specified\" && exit 0"
   },
